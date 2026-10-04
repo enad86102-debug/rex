@@ -1,0 +1,11 @@
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+
+linter:
+  rules:
+    - avoid_print
+    - prefer_const_constructors
+    - use_key_in_widget_constructors
+    - use_super_parameters

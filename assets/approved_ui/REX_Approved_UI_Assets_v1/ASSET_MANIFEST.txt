@@ -1,0 +1,15 @@
+REX APPROVED UI ASSET PACK v1
+
+All portrait references are 941x1672 except the square logo 1254x1254.
+
+01_environment_picker.png  <-  اختر الأجواء(1).png  [941x1672]
+02_table_green_players.png  <-  طاولة REX الخضراء مع أربعة لاعبين بالغين(1).png  [941x1672]
+03_rex_world_destinations.png  <-  عالم REX_ أربع وجهات ملكية.png  [941x1672]
+04_table_royal_players.png  <-  طاولة REX الملكية بأربعة لاعبين(2).png  [941x1672]
+05_splash_loading.png  <-  شعار ريكس الذهبي أثناء التحميل(1).png  [941x1672]
+06_win_celebration.png  <-  احتفال REX الذهبي بعد الفوز(1).png  [941x1672]
+07_achievements.png  <-  رحلة الإنجازات في المرصد الملكي(1).png  [941x1672]
+08_friends_session.png  <-  جلسة أصدقاء REX على شرفة القصر(1).png  [941x1672]
+09_royal_lobby_variant_a.png  <-  ردهة ملكية خيالية ببطاقات ذهبية (1).png  [941x1672]
+10_rex_logo_square.png  <-  شعار ريكس بأوراق البستوني الذهبية(1).png  [1254x1254]
+11_royal_lobby_variant_b.png  <-  ردهة ملكية خيالية ببطاقات ذهبية(1).png  [941x1672]

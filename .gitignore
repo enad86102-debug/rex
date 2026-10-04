@@ -1,0 +1,22 @@
+# Local secrets
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Local dependencies and caches
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Logs and operating system files
+*.log
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Machine-local IDE state
+/.idea/
