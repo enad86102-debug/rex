@@ -1,8 +1,9 @@
-gradle-wrapper.jar
+# Keep the Gradle wrapper in source control so a fresh clone can build.
+!gradle-wrapper.jar
 /.gradle
 /captures/
-/gradlew
-/gradlew.bat
+!/gradlew
+!/gradlew.bat
 /local.properties
 GeneratedPluginRegistrant.java
 .cxx/
