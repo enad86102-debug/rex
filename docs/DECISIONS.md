@@ -176,7 +176,7 @@ rejection. Unknown choices are not automatically proposals or under review.
 | OPEN-003 | Android API/device targets and budgets | UNKNOWN / TO BE DECIDED; engineering analysis and approval. |
 | OPEN-004 | Toolchain versions, libraries, transport, persistence | UNKNOWN / TO BE DECIDED; scoped technical review. |
 | OPEN-005 | Database/cloud/auth/analytics/ads/payments | UNKNOWN / TO BE DECIDED; outside current phase. |
-| OPEN-006 | Remote repository and local Git linkage | UNKNOWN / TO BE DECIDED; no repository URL supplied. |
+| OPEN-006 | Remote repository and local Git linkage | VERIFIED / IMPLEMENTED; `https://github.com/enad86102-debug/rex.git` is configured as `origin` and `main` is pushed. |
 | OPEN-007 | Incorporation and commercial/legal terms | UNKNOWN / TO BE DECIDED; no software-development dependency. |
 
 These IDs track questions, not approved decisions. Convert an item into a
