@@ -323,9 +323,19 @@ class _RexTableState extends State<RexTablePage>
     body: Stack(
       fit: StackFit.expand,
       children: [
-        Image.asset('$_assets${widget.environment}', fit: BoxFit.cover),
-        Container(color: Colors.black.withAlpha(75)),
-        // Starter-kit layered table preview; the backdrop remains reference art.
+        // Candidate production scene uses an empty environment scaffold. The
+        // supplied full-screen concept is reference-only and would duplicate
+        // its own table, chairs, and players behind these independent layers.
+        DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF111B2A), Color(0xFF050608)],
+            ),
+          ),
+        ),
+        // Starter-kit layered table preview with explicit seat placeholders.
         IgnorePointer(
           child: Center(
             child: FractionallySizedBox(
@@ -385,6 +395,22 @@ class _RexTableState extends State<RexTablePage>
                         fit: BoxFit.contain,
                       ),
                     ),
+                  ),
+                  const Align(
+                    alignment: Alignment.topCenter,
+                    child: _SeatPlaceholder(label: 'NORTH • ART MISSING'),
+                  ),
+                  const Align(
+                    alignment: Alignment.centerRight,
+                    child: _SeatPlaceholder(label: 'EAST • ART MISSING'),
+                  ),
+                  const Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _SeatPlaceholder(label: 'SOUTH • ART MISSING'),
+                  ),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: _SeatPlaceholder(label: 'WEST • ART MISSING'),
                   ),
                 ],
               ),
@@ -522,6 +548,26 @@ class _RexTableState extends State<RexTablePage>
                 ),
         ),
       ],
+    ),
+  );
+}
+
+class _SeatPlaceholder extends StatelessWidget {
+  const _SeatPlaceholder({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    decoration: BoxDecoration(
+      color: Colors.black.withAlpha(190),
+      border: Border.all(color: _gold.withAlpha(220)),
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Text(
+      label,
+      style: const TextStyle(fontSize: 9, color: Colors.white),
+      textDirection: TextDirection.ltr,
     ),
   );
 }
