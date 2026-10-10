@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'features_table_scene.dart';
+
 void main() => runApp(const RexApp());
 const _gold = Color(0xFFE4AF45),
     _ink = Color(0xFF080B10),
-    _assets = 'assets/approved_ui/',
-    _starterAssets = 'assets/staging/rex_starter_kit/';
-
-// Normalized table-space anchors; kept in sync with the composition contract.
-const _seatAnchors = <String, Alignment>{
-  'NORTH': Alignment(0, -0.68),
-  'EAST': Alignment(0.68, 0),
-  'SOUTH': Alignment(0, 0.68),
-  'WEST': Alignment(-0.68, 0),
-};
+    _assets = 'assets/approved_ui/';
 
 class RexApp extends StatelessWidget {
   const RexApp({super.key});
@@ -239,10 +232,10 @@ class RexEnvironments extends StatelessWidget {
           runSpacing: 8,
           children: [
             for (final entry in const [
-              ('وادي رم', '02_table_green_players.png'),
-              ('البتراء', '04_table_royal_players.png'),
-              ('العقبة', '08_friends_session.png'),
-              ('القاعة الملكية', '09_royal_lobby_variant_a.png'),
+              ('وادي رم', 'wadi_rum'),
+              ('البتراء', 'petra'),
+              ('العقبة', 'aqaba'),
+              ('القاعة الملكية', 'royal_hall'),
             ])
               SizedBox(
                 width: (MediaQuery.sizeOf(context).width - 48) / 2,
@@ -269,10 +262,7 @@ class RexEnvironments extends StatelessWidget {
 }
 
 class RexSession extends StatelessWidget {
-  const RexSession({
-    super.key,
-    this.environment = '02_table_green_players.png',
-  });
+  const RexSession({super.key, this.environment = 'royal_hall'});
   final String environment;
   @override
   Widget build(BuildContext context) => _Screen(
@@ -304,10 +294,7 @@ class RexSession extends StatelessWidget {
 }
 
 class RexTablePage extends StatefulWidget {
-  const RexTablePage({
-    super.key,
-    this.environment = '02_table_green_players.png',
-  });
+  const RexTablePage({super.key, this.environment = 'royal_hall'});
   final String environment;
   @override
   State<RexTablePage> createState() => _RexTableState();
@@ -331,100 +318,7 @@ class _RexTableState extends State<RexTablePage>
     body: Stack(
       fit: StackFit.expand,
       children: [
-        // Candidate production scene uses an empty environment scaffold. The
-        // supplied full-screen concept is reference-only and would duplicate
-        // its own table, chairs, and players behind these independent layers.
-        DecoratedBox(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFF111B2A), Color(0xFF050608)],
-            ),
-          ),
-        ),
-        // Starter-kit layered table preview with explicit seat placeholders.
-        IgnorePointer(
-          child: Center(
-            child: FractionallySizedBox(
-              widthFactor: .96,
-              heightFactor: .54,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.asset(
-                    '${_starterAssets}extracted_verified/Table_Emerald_Felt_Original.png',
-                    fit: BoxFit.contain,
-                  ),
-                  Image.asset(
-                    '${_starterAssets}extracted_verified/Table_Royal_Gold_Frame_Original.png',
-                    fit: BoxFit.contain,
-                  ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: FractionallySizedBox(
-                      widthFactor: .24,
-                      heightFactor: .42,
-                      child: Image.asset(
-                        '${_starterAssets}extracted_verified/Chair_Blue_Gold_Front_Original.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: FractionallySizedBox(
-                      widthFactor: .24,
-                      heightFactor: .42,
-                      child: Image.asset(
-                        '${_starterAssets}extracted_verified/Chair_Blue_Gold_Front_Original.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: FractionallySizedBox(
-                      widthFactor: .24,
-                      heightFactor: .42,
-                      child: Image.asset(
-                        '${_starterAssets}extracted_verified/Chair_Blue_Gold_Angled_Original.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: FractionallySizedBox(
-                      widthFactor: .24,
-                      heightFactor: .42,
-                      child: Image.asset(
-                        '${_starterAssets}extracted_verified/Chair_Blue_Gold_Angled_Original.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: _seatAnchors['NORTH']!,
-                    child: _SeatPlaceholder(label: 'NORTH • ART MISSING'),
-                  ),
-                  Align(
-                    alignment: _seatAnchors['EAST']!,
-                    child: _SeatPlaceholder(label: 'EAST • ART MISSING'),
-                  ),
-                  Align(
-                    alignment: _seatAnchors['SOUTH']!,
-                    child: _SeatPlaceholder(label: 'SOUTH • ART MISSING'),
-                  ),
-                  Align(
-                    alignment: _seatAnchors['WEST']!,
-                    child: _SeatPlaceholder(label: 'WEST • ART MISSING'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        TableScene(environment: rexEnvironmentFromId(widget.environment)),
         SafeArea(
           child: Column(
             children: [
@@ -560,26 +454,6 @@ class _RexTableState extends State<RexTablePage>
                 ),
         ),
       ],
-    ),
-  );
-}
-
-class _SeatPlaceholder extends StatelessWidget {
-  const _SeatPlaceholder({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    decoration: BoxDecoration(
-      color: Colors.black.withAlpha(190),
-      border: Border.all(color: _gold.withAlpha(220)),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Text(
-      label,
-      style: const TextStyle(fontSize: 9, color: Colors.white),
-      textDirection: TextDirection.ltr,
     ),
   );
 }

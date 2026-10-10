@@ -3,6 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rex_mobile/main.dart';
 
 void main() {
+  test('table scene contract exposes stable environments and anchors', () {
+    expect(rexEnvironmentFromId('wadi_rum'), RexEnvironment.wadiRum);
+    expect(rexEnvironmentFromId('unknown'), RexEnvironment.royalHall);
+    expect(rexSeatDefinitions.map((seat) => seat.id),
+        ['north', 'east', 'south', 'west']);
+    expect(rexSeatDefinitions[0].anchor, const Alignment(0, -.68));
+    expect(rexSeatDefinitions[1].anchor, const Alignment(.68, 0));
+  });
+
   testWidgets('official splash renders REX identity', (tester) async {
     await tester.pumpWidget(const RexApp());
     expect(find.text('REX'), findsOneWidget);

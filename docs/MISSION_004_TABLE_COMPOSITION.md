@@ -50,3 +50,19 @@ Baseline: `REF_06_GAME_TABLE_FOUR_PLAYERS.png`. Compare anchor placement, table 
 - Code constants `_seatAnchors` use normalized table-space coordinates: North (0.50, 0.16), East (0.84, 0.50), South (0.50, 0.84), West (0.16, 0.50), represented in Flutter alignment space as (0,-0.68), (0.68,0), (0,0.68), (-0.68,0). The four labels use those constants.
 - A real-device screenshot was not captured: `adb devices` returned no connected devices and `adb exec-out screencap -p` produced a zero-byte file. This is **DEVICE SCREENSHOT BLOCKED**, not visual evidence.
 - Reference comparison remains qualitative and blocked for direct measurement until a device screenshot is supplied. Known differences: neutral background instead of the reference environment, proxy chairs, missing adult characters, simplified UI chrome, and staging labels.
+
+## Mission 005 implementation record
+
+The table composition is now separated into `lib/features_table_scene.dart`:
+
+- `TableScene` owns composition order.
+- `EnvironmentLayer` owns environment IDs and Arabic staging labels.
+- `SeatLayer` iterates one shared `rexSeatDefinitions` list.
+- `SeatSlot` owns the shared anchor for chair and character slots.
+- `CharacterSlot` and `ChairSlot` are stable production asset interfaces.
+- `TableSurface` owns felt/frame and the independent card-layer boundary.
+- `InteractiveCardLayer` and `TableOverlay` reserve explicit front layers without adding gameplay.
+
+`RexTablePage` now passes a meaningful `RexEnvironment` identifier rather than a raw background filename. Missing environments use the neutral staging fallback and preserve the selected ID through navigation. No reference screenshot is loaded as runtime artwork.
+
+Targeted tests cover environment fallback and North/East/South/West anchor definitions in addition to the existing card and navigation tests. The scene is technically ready to receive production art, but artistic approval remains blocked by the missing independent characters, perspective-correct chairs, and environment layers.
