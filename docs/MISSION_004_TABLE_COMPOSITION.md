@@ -42,3 +42,11 @@ Procedural tables/chairs and guide-only player GLBs remain staging references. T
 ## Comparison and approval gate
 
 Baseline: `REF_06_GAME_TABLE_FOUR_PLAYERS.png`. Compare anchor placement, table scale, perspective, card readability, lighting and occlusion against a real Android screenshot. The current implementation intentionally differs because P0 environment, chair and character layers are missing. Visual approval is blocked until those assets are delivered and reviewed.
+
+## Mission 004.1 verification record
+
+- CI run `38081962840` could not be queried from this Windows workspace because GitHub CLI (`gh`) is not installed or available on PATH. No CI result is claimed; the remote run must be checked in GitHub or with an authenticated CLI on an operator machine.
+- The implementation now exposes the selected environment name with a `STAGING` label. Because independent production environment layers are unavailable, the scene uses an explicit neutral staging fallback instead of silently rendering the selected flattened concept.
+- Code constants `_seatAnchors` use normalized table-space coordinates: North (0.50, 0.16), East (0.84, 0.50), South (0.50, 0.84), West (0.16, 0.50), represented in Flutter alignment space as (0,-0.68), (0.68,0), (0,0.68), (-0.68,0). The four labels use those constants.
+- A real-device screenshot was not captured: `adb devices` returned no connected devices and `adb exec-out screencap -p` produced a zero-byte file. This is **DEVICE SCREENSHOT BLOCKED**, not visual evidence.
+- Reference comparison remains qualitative and blocked for direct measurement until a device screenshot is supplied. Known differences: neutral background instead of the reference environment, proxy chairs, missing adult characters, simplified UI chrome, and staging labels.

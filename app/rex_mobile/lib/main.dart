@@ -6,6 +6,14 @@ const _gold = Color(0xFFE4AF45),
     _assets = 'assets/approved_ui/',
     _starterAssets = 'assets/staging/rex_starter_kit/';
 
+// Normalized table-space anchors; kept in sync with the composition contract.
+const _seatAnchors = <String, Alignment>{
+  'NORTH': Alignment(0, -0.68),
+  'EAST': Alignment(0.68, 0),
+  'SOUTH': Alignment(0, 0.68),
+  'WEST': Alignment(-0.68, 0),
+};
+
 class RexApp extends StatelessWidget {
   const RexApp({super.key});
   @override
@@ -396,20 +404,20 @@ class _RexTableState extends State<RexTablePage>
                       ),
                     ),
                   ),
-                  const Align(
-                    alignment: Alignment.topCenter,
+                  Align(
+                    alignment: _seatAnchors['NORTH']!,
                     child: _SeatPlaceholder(label: 'NORTH • ART MISSING'),
                   ),
-                  const Align(
-                    alignment: Alignment.centerRight,
+                  Align(
+                    alignment: _seatAnchors['EAST']!,
                     child: _SeatPlaceholder(label: 'EAST • ART MISSING'),
                   ),
-                  const Align(
-                    alignment: Alignment.bottomCenter,
+                  Align(
+                    alignment: _seatAnchors['SOUTH']!,
                     child: _SeatPlaceholder(label: 'SOUTH • ART MISSING'),
                   ),
-                  const Align(
-                    alignment: Alignment.centerLeft,
+                  Align(
+                    alignment: _seatAnchors['WEST']!,
                     child: _SeatPlaceholder(label: 'WEST • ART MISSING'),
                   ),
                 ],
@@ -430,6 +438,10 @@ class _RexTableState extends State<RexTablePage>
                   const Text(
                     'طاولة REX',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'STAGING • ${widget.environment.replaceAll('.png', '')}',
+                    style: const TextStyle(fontSize: 9, color: Colors.white70),
                   ),
                   const Spacer(),
                   IconButton(
