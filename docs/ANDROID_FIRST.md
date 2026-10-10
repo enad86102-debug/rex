@@ -19,11 +19,13 @@ but do not implement or configure iOS-specific product features now.
   bundles, and on-demand assets where justified. Rules and fairness stay equal.
 - Keep localized user-facing strings outside scattered UI literals.
 
-## Explicit exclusions in this phase
+## Current implementation boundary
 
-Do not initialize Flutter or Go or install dependencies. Do not add billing,
-ads, voice, or Google Play release configuration without a later explicit task.
-Android hardening/integrity mechanisms are later scoped work.
+The first official Android development build is authorized through the scoped
+REX Codex Execution Order 002. Flutter/Dart application code and debug APK
+builds are allowed within that task. This does not authorize Go backend work,
+multiplayer, billing, ads, voice, production signing, or Google Play release
+configuration. Android hardening/integrity mechanisms remain later scoped work.
 
 ## Engineering selections still pending
 
@@ -32,6 +34,8 @@ minimum supported devices, device test matrix, performance budgets, build
 tooling, application/package identifier, signing/release strategy, and asset
 delivery implementation are **UNKNOWN / TO BE DECIDED**.
 
-Choose minimum Android/API targets only through engineering analysis and
-approval during Android bootstrap. This document makes no arbitrary device or
-SDK assumptions and does not certify that the local Android toolchain is ready.
+The current local preflight records Flutter 3.47.3, Dart 3.13.3, Android SDK
+36.0.0/build-tools 36.0.0, platform android-37.0, and Android Studio's bundled
+OpenJDK 25.0.3. The debug application uses the Flutter-managed compile/target
+values and has not been certified as a Google Play release. Android SDK
+licenses still require human acceptance on this machine.

@@ -11,9 +11,10 @@ Correction 002 clarifies ChatGPT's supervision of Codex execution while
 preserving founder governance. The current model is summarized below and
 detailed in [GOVERNANCE.md](GOVERNANCE.md).
 
-Current phase: **Project Definition / Repository Context**. Application code
-will start in later incremental missions. The local workspace contains no
-existing production code to audit.
+Current phase: **First Official Android Development Build**. The repository
+contains an internal Flutter/Dart Android development application and a
+separate PBT08 experiment. This phase does not imply that the commercial game,
+multiplayer, backend, economy, or release signing is complete.
 
 ## Founders, technical leadership and tools
 

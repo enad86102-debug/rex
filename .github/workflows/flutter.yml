@@ -25,7 +25,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version-file: app/rex_mobile/pubspec.yaml
+          flutter-version: '3.47.3'
           cache: true
 
       - name: Install dependencies
