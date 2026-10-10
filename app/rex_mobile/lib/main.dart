@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 void main() => runApp(const RexApp());
 const _gold = Color(0xFFE4AF45),
     _ink = Color(0xFF080B10),
-    _assets = 'assets/approved_ui/';
+    _assets = 'assets/approved_ui/',
+    _starterAssets = 'assets/staging/rex_starter_kit/';
 
 class RexApp extends StatelessWidget {
   const RexApp({super.key});
@@ -324,6 +325,72 @@ class _RexTableState extends State<RexTablePage>
       children: [
         Image.asset('$_assets${widget.environment}', fit: BoxFit.cover),
         Container(color: Colors.black.withAlpha(75)),
+        // Starter-kit layered table preview; the backdrop remains reference art.
+        IgnorePointer(
+          child: Center(
+            child: FractionallySizedBox(
+              widthFactor: .96,
+              heightFactor: .54,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    '${_starterAssets}extracted_verified/Table_Emerald_Felt_Original.png',
+                    fit: BoxFit.contain,
+                  ),
+                  Image.asset(
+                    '${_starterAssets}extracted_verified/Table_Royal_Gold_Frame_Original.png',
+                    fit: BoxFit.contain,
+                  ),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: FractionallySizedBox(
+                      widthFactor: .24,
+                      heightFactor: .42,
+                      child: Image.asset(
+                        '${_starterAssets}extracted_verified/Chair_Blue_Gold_Front_Original.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: FractionallySizedBox(
+                      widthFactor: .24,
+                      heightFactor: .42,
+                      child: Image.asset(
+                        '${_starterAssets}extracted_verified/Chair_Blue_Gold_Front_Original.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: FractionallySizedBox(
+                      widthFactor: .24,
+                      heightFactor: .42,
+                      child: Image.asset(
+                        '${_starterAssets}extracted_verified/Chair_Blue_Gold_Angled_Original.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: FractionallySizedBox(
+                      widthFactor: .24,
+                      heightFactor: .42,
+                      child: Image.asset(
+                        '${_starterAssets}extracted_verified/Chair_Blue_Gold_Angled_Original.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
         SafeArea(
           child: Column(
             children: [

@@ -18,3 +18,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/approved_ui/
+    - assets/staging/rex_starter_kit/extracted_verified/
+    - assets/staging/rex_starter_kit/playing_cards/

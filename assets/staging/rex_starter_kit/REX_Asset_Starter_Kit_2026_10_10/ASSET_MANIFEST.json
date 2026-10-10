@@ -1,0 +1,877 @@
+{
+  "project": "REX",
+  "status": "starter assets, not visual approval",
+  "source": "user-supplied original REX art directions and sprites",
+  "files": [
+    {
+      "path": "3d/glb/table_royal_emerald.glb",
+      "id": "TABLE-3D-emerald",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D royal table geometry, colored felt, ornamental rim and pedestal; not sculpted photorealistic asset",
+      "vertices": 10810,
+      "faces": 20944,
+      "bytes": 425292
+    },
+    {
+      "path": "3d/glb/chair_royal_emerald.glb",
+      "id": "CHAIR-3D-emerald",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D upholstered royal chair; stylized ornament; no upholstery texture baking",
+      "vertices": 1976,
+      "faces": 3804,
+      "bytes": 78276
+    },
+    {
+      "path": "3d/glb/table_royal_sapphire.glb",
+      "id": "TABLE-3D-sapphire",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D royal table geometry, colored felt, ornamental rim and pedestal; not sculpted photorealistic asset",
+      "vertices": 10810,
+      "faces": 20944,
+      "bytes": 425292
+    },
+    {
+      "path": "3d/glb/chair_royal_sapphire.glb",
+      "id": "CHAIR-3D-sapphire",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D upholstered royal chair; stylized ornament; no upholstery texture baking",
+      "vertices": 1976,
+      "faces": 3804,
+      "bytes": 78276
+    },
+    {
+      "path": "3d/glb/table_royal_ruby.glb",
+      "id": "TABLE-3D-ruby",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D royal table geometry, colored felt, ornamental rim and pedestal; not sculpted photorealistic asset",
+      "vertices": 10810,
+      "faces": 20944,
+      "bytes": 425292
+    },
+    {
+      "path": "3d/glb/chair_royal_ruby.glb",
+      "id": "CHAIR-3D-ruby",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D upholstered royal chair; stylized ornament; no upholstery texture baking",
+      "vertices": 1976,
+      "faces": 3804,
+      "bytes": 78276
+    },
+    {
+      "path": "3d/glb/table_royal_obsidian.glb",
+      "id": "TABLE-3D-obsidian",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D royal table geometry, colored felt, ornamental rim and pedestal; not sculpted photorealistic asset",
+      "vertices": 10810,
+      "faces": 20944,
+      "bytes": 425292
+    },
+    {
+      "path": "3d/glb/chair_royal_obsidian.glb",
+      "id": "CHAIR-3D-obsidian",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D upholstered royal chair; stylized ornament; no upholstery texture baking",
+      "vertices": 1976,
+      "faces": 3804,
+      "bytes": 78276
+    },
+    {
+      "path": "3d/glb/table_royal_ivory.glb",
+      "id": "TABLE-3D-ivory",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D royal table geometry, colored felt, ornamental rim and pedestal; not sculpted photorealistic asset",
+      "vertices": 10810,
+      "faces": 20944,
+      "bytes": 425292
+    },
+    {
+      "path": "3d/glb/chair_royal_ivory.glb",
+      "id": "CHAIR-3D-ivory",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D upholstered royal chair; stylized ornament; no upholstery texture baking",
+      "vertices": 1976,
+      "faces": 3804,
+      "bytes": 78276
+    },
+    {
+      "path": "3d/glb/table_royal_amethyst.glb",
+      "id": "TABLE-3D-amethyst",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D royal table geometry, colored felt, ornamental rim and pedestal; not sculpted photorealistic asset",
+      "vertices": 10810,
+      "faces": 20944,
+      "bytes": 425292
+    },
+    {
+      "path": "3d/glb/chair_royal_amethyst.glb",
+      "id": "CHAIR-3D-amethyst",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "Actual 3D upholstered royal chair; stylized ornament; no upholstery texture baking",
+      "vertices": 1976,
+      "faces": 3804,
+      "bytes": 78276
+    },
+    {
+      "path": "3d/glb/player_north_female_GUIDE_ONLY.glb",
+      "id": "PLAYER-GUIDE-north_female",
+      "kind": "3d_mesh",
+      "status": "PLACEHOLDER_ONLY_NOT_GAME_ART",
+      "description": "Fully 3D seated proportion/blocking mannequin. NOT photorealistic, NOT rigged, NOT ready for production use",
+      "vertices": 3078,
+      "faces": 6024,
+      "bytes": 122548
+    },
+    {
+      "path": "3d/glb/player_east_male_GUIDE_ONLY.glb",
+      "id": "PLAYER-GUIDE-east_male",
+      "kind": "3d_mesh",
+      "status": "PLACEHOLDER_ONLY_NOT_GAME_ART",
+      "description": "Fully 3D seated proportion/blocking mannequin. NOT photorealistic, NOT rigged, NOT ready for production use",
+      "vertices": 2916,
+      "faces": 5704,
+      "bytes": 116116
+    },
+    {
+      "path": "3d/glb/player_west_male_GUIDE_ONLY.glb",
+      "id": "PLAYER-GUIDE-west_male",
+      "kind": "3d_mesh",
+      "status": "PLACEHOLDER_ONLY_NOT_GAME_ART",
+      "description": "Fully 3D seated proportion/blocking mannequin. NOT photorealistic, NOT rigged, NOT ready for production use",
+      "vertices": 2916,
+      "faces": 5704,
+      "bytes": 116116
+    },
+    {
+      "path": "3d/glb/player_south_female_GUIDE_ONLY.glb",
+      "id": "PLAYER-GUIDE-south_female",
+      "kind": "3d_mesh",
+      "status": "PLACEHOLDER_ONLY_NOT_GAME_ART",
+      "description": "Fully 3D seated proportion/blocking mannequin. NOT photorealistic, NOT rigged, NOT ready for production use",
+      "vertices": 3078,
+      "faces": 6024,
+      "bytes": 122548
+    },
+    {
+      "path": "3d/glb/card_single_front.glb",
+      "id": "CARD-MESH-front",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "3D card rectangular geometry; artwork separately provided as 2D card face PNG",
+      "vertices": 16,
+      "faces": 24,
+      "bytes": 1544
+    },
+    {
+      "path": "3d/glb/card_single_back.glb",
+      "id": "CARD-MESH-back",
+      "kind": "3d_mesh",
+      "status": "PROCEDURAL_STAGING",
+      "description": "3D card rectangular geometry; artwork separately provided as 2D card face PNG",
+      "vertices": 16,
+      "faces": 24,
+      "bytes": 1540
+    },
+    {
+      "path": "3d/glb/REX_four_seat_scene_GUIDE_ONLY.glb",
+      "id": "SCENE-3D-001",
+      "kind": "3d_scene",
+      "status": "PLACEHOLDER_ONLY_NOT_GAME_ART",
+      "description": "3D layout sample for seat placement and perspective tests, NOT image-quality production scene",
+      "vertices": 30702,
+      "faces": 59616,
+      "bytes": 1207628
+    },
+    {
+      "path": "2d/extracted_verified/REX_Logo_Original_Transparent.png",
+      "id": "SOURCE-ALPHA-REX_Logo_Original_Transparent.png",
+      "kind": "png_rgba",
+      "status": "ACTUAL_ALPHA_REFERENCE",
+      "description": "Exact original transparent PNG from uploaded user-supplied REX reference pack",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alpha_minmax": [
+        0,
+        255
+      ],
+      "bytes": 2528537
+    },
+    {
+      "path": "2d/extracted_verified/Chair_Blue_Gold_Angled_Original.png",
+      "id": "SOURCE-ALPHA-Chair_Blue_Gold_Angled_Original.png",
+      "kind": "png_rgba",
+      "status": "ACTUAL_ALPHA_REFERENCE",
+      "description": "Exact original transparent PNG from uploaded user-supplied REX reference pack",
+      "dimensions": [
+        1086,
+        1448
+      ],
+      "alpha_minmax": [
+        0,
+        255
+      ],
+      "bytes": 2057246
+    },
+    {
+      "path": "2d/extracted_verified/Chair_Blue_Gold_Front_Original.png",
+      "id": "SOURCE-ALPHA-Chair_Blue_Gold_Front_Original.png",
+      "kind": "png_rgba",
+      "status": "ACTUAL_ALPHA_REFERENCE",
+      "description": "Exact original transparent PNG from uploaded user-supplied REX reference pack",
+      "dimensions": [
+        1086,
+        1448
+      ],
+      "alpha_minmax": [
+        0,
+        255
+      ],
+      "bytes": 2481933
+    },
+    {
+      "path": "2d/extracted_verified/Table_Emerald_Felt_Original.png",
+      "id": "SOURCE-ALPHA-Table_Emerald_Felt_Original.png",
+      "kind": "png_rgba",
+      "status": "ACTUAL_ALPHA_REFERENCE",
+      "description": "Exact original transparent PNG from uploaded user-supplied REX reference pack",
+      "dimensions": [
+        1448,
+        1086
+      ],
+      "alpha_minmax": [
+        0,
+        255
+      ],
+      "bytes": 2697113
+    },
+    {
+      "path": "2d/extracted_verified/Table_Royal_Gold_Frame_Original.png",
+      "id": "SOURCE-ALPHA-Table_Royal_Gold_Frame_Original.png",
+      "kind": "png_rgba",
+      "status": "ACTUAL_ALPHA_REFERENCE",
+      "description": "Exact original transparent PNG from uploaded user-supplied REX reference pack",
+      "dimensions": [
+        1448,
+        1086
+      ],
+      "alpha_minmax": [
+        0,
+        255
+      ],
+      "bytes": 1898540
+    },
+    {
+      "path": "references/REF_06_GAME_TABLE_FOUR_PLAYERS.png",
+      "id": "REF-REF_06_GAME_TABLE_FOUR_PLAYERS.png",
+      "kind": "png_reference",
+      "status": "REFERENCE_ONLY",
+      "description": "Unmodified concept reference image; not a composable production layer"
+    },
+    {
+      "path": "references/REF_09_MAIN_ROYAL_LOBBY.png",
+      "id": "REF-REF_09_MAIN_ROYAL_LOBBY.png",
+      "kind": "png_reference",
+      "status": "REFERENCE_ONLY",
+      "description": "Unmodified concept reference image; not a composable production layer"
+    },
+    {
+      "path": "references/REF_02_ASSET_ATLAS_REFERENCE.png",
+      "id": "REF-REF_02_ASSET_ATLAS_REFERENCE.png",
+      "kind": "png_reference",
+      "status": "REFERENCE_ONLY",
+      "description": "Unmodified concept reference image; not a composable production layer"
+    },
+    {
+      "path": "2d/playing_cards/spades_A.png",
+      "id": "CARD-2D-spades-A",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_2.png",
+      "id": "CARD-2D-spades-2",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_3.png",
+      "id": "CARD-2D-spades-3",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_4.png",
+      "id": "CARD-2D-spades-4",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_5.png",
+      "id": "CARD-2D-spades-5",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_6.png",
+      "id": "CARD-2D-spades-6",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_7.png",
+      "id": "CARD-2D-spades-7",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_8.png",
+      "id": "CARD-2D-spades-8",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_9.png",
+      "id": "CARD-2D-spades-9",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_10.png",
+      "id": "CARD-2D-spades-10",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_J.png",
+      "id": "CARD-2D-spades-J",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_Q.png",
+      "id": "CARD-2D-spades-Q",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/spades_K.png",
+      "id": "CARD-2D-spades-K",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_A.png",
+      "id": "CARD-2D-hearts-A",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_2.png",
+      "id": "CARD-2D-hearts-2",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_3.png",
+      "id": "CARD-2D-hearts-3",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_4.png",
+      "id": "CARD-2D-hearts-4",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_5.png",
+      "id": "CARD-2D-hearts-5",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_6.png",
+      "id": "CARD-2D-hearts-6",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_7.png",
+      "id": "CARD-2D-hearts-7",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_8.png",
+      "id": "CARD-2D-hearts-8",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_9.png",
+      "id": "CARD-2D-hearts-9",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_10.png",
+      "id": "CARD-2D-hearts-10",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_J.png",
+      "id": "CARD-2D-hearts-J",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_Q.png",
+      "id": "CARD-2D-hearts-Q",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/hearts_K.png",
+      "id": "CARD-2D-hearts-K",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_A.png",
+      "id": "CARD-2D-diamonds-A",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_2.png",
+      "id": "CARD-2D-diamonds-2",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_3.png",
+      "id": "CARD-2D-diamonds-3",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_4.png",
+      "id": "CARD-2D-diamonds-4",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_5.png",
+      "id": "CARD-2D-diamonds-5",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_6.png",
+      "id": "CARD-2D-diamonds-6",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_7.png",
+      "id": "CARD-2D-diamonds-7",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_8.png",
+      "id": "CARD-2D-diamonds-8",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_9.png",
+      "id": "CARD-2D-diamonds-9",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_10.png",
+      "id": "CARD-2D-diamonds-10",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_J.png",
+      "id": "CARD-2D-diamonds-J",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_Q.png",
+      "id": "CARD-2D-diamonds-Q",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/diamonds_K.png",
+      "id": "CARD-2D-diamonds-K",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_A.png",
+      "id": "CARD-2D-clubs-A",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_2.png",
+      "id": "CARD-2D-clubs-2",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_3.png",
+      "id": "CARD-2D-clubs-3",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_4.png",
+      "id": "CARD-2D-clubs-4",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_5.png",
+      "id": "CARD-2D-clubs-5",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_6.png",
+      "id": "CARD-2D-clubs-6",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_7.png",
+      "id": "CARD-2D-clubs-7",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_8.png",
+      "id": "CARD-2D-clubs-8",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_9.png",
+      "id": "CARD-2D-clubs-9",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_10.png",
+      "id": "CARD-2D-clubs-10",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_J.png",
+      "id": "CARD-2D-clubs-J",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_Q.png",
+      "id": "CARD-2D-clubs-Q",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/clubs_K.png",
+      "id": "CARD-2D-clubs-K",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Readable standard playing card face, independent PNG",
+      "dimensions": [
+        180,
+        260
+      ]
+    },
+    {
+      "path": "2d/playing_cards/rex_card_back.png",
+      "id": "CARD-2D-BACK",
+      "kind": "png_rgba",
+      "status": "GENERATED_PLAYABLE_VISUAL",
+      "description": "Reusable REX card back, consistent with gold/navy motif"
+    }
+  ]
+}
