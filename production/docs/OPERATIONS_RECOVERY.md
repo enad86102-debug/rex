@@ -37,7 +37,11 @@
   Flutter analyze و13 unit/widget ناجحة بعد نص الازدحام الجديد.
 - صورة Docker بُنيت محليًا. شُغّل خادمها بمستخدم65532 وrootfs للقراءة
   فقط وبدون capabilities؛ health وإنشاء ضيف نجحا. هذا فحص داخلي، لا نشر.
-- فحص CI لهذا الفرع يُضاف عند اكتماله؛ لا تُنسب نتيجة فرع سابق تلقائيًا.
+- [CI run 38907472579](https://github.com/enad86102-debug/rex/actions/runs/38907472579)
+  على `8ecf7c5`: أربعة jobs ناجحة. شمل foundation فحوص Go والأصول والأمان
+  وTLS والتكامل وبناء APK داخلي. نجح Android native باختبارات مخزن الجلسة
+  واتصال الخادم على المحاكي وبناء APK داخلي. اجتاز مسارا regression القديم.
+  هذه نتيجة debug داخلية؛ ليست AAB موقعًا للإصدار ولا اختبار أجهزة إنتاجية.
 
 الملفات: `server/internal/service/service.go`, `expiry_test.go`,
 `server/cmd/rexd/main.go`, `server/internal/api/api.go`, `runtime_test.go`,
