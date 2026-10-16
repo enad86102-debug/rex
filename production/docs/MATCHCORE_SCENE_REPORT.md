@@ -32,7 +32,11 @@
   اختبار Flutter بأربع اتصالات مستقلة إلى الخادم الفعلي ناجح.
 - `check_security.sh`: gosec بلا findings أو analysis errors؛ Staticcheck
   وgovulncheck بلا نتائج معلنة، وGitleaks بلا أسرار مكتشفة.
-- CI تضاف نتيجته بعد انتهائه، دون افتراض نجاح.
+- [CI run 38915219306](https://github.com/enad86102-debug/rex/actions/runs/38915219306)
+  على commit `1060e73`: أربعة jobs ناجحة؛ foundation شمل فحوص Go وPython
+  والأمان وTLS والتكامل وبناء APK داخلي، وandroid-native اختبر مخزن
+  الجلسة والخادم على محاكي. نجح مسارا regression القديم. هذا بناء debug
+  للاختبار، وليس إصدارًا موقعًا أو قياس أداء بصريًا.
 
 ## ما ينقص
 
