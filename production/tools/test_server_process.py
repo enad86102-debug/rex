@@ -161,6 +161,23 @@ class ServerProcessTest(unittest.TestCase):
         self.start()
         self.assertEqual(self.request("GET", "/v1/admin/runtime", secret)[0], 200)
 
+    def test_invalid_server_configuration_cannot_sweep_store(self):
+        self.start()
+        _, guest = self.request("POST", "/v1/guests", body={})
+        self.stop()
+        path = Path(self.env["REX_STORE"])
+        state = json.loads(path.read_text())
+        token_hash = hashlib.sha256(guest["token"].encode()).hexdigest()
+        state["sessions"][token_hash]["expires_at"] = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+        path.write_text(json.dumps(state))
+        before = path.read_bytes()
+        result = subprocess.run([self.binary], env={**self.env, "REX_ADMIN_TOKEN": "too-short"},
+                                capture_output=True, timeout=5)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(path.read_bytes(), before)
+        self.start()
+        self.assertNotIn(token_hash, json.loads(path.read_text())["sessions"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -42,11 +42,6 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	if count, err := s.SweepExpired(); err != nil {
-		return err
-	} else if count > 0 {
-		slog.Info("expired sessions recovered", "count", count)
-	}
 	address := env("REX_LISTEN", "127.0.0.1:8080")
 	cert, key := os.Getenv("REX_TLS_CERT"), os.Getenv("REX_TLS_KEY")
 	host, _, err := net.SplitHostPort(address)
@@ -65,6 +60,11 @@ func run() error {
 	adminToken := os.Getenv("REX_ADMIN_TOKEN")
 	if adminToken != "" && len(adminToken) < 32 {
 		return errors.New("REX_ADMIN_TOKEN must contain at least 32 bytes")
+	}
+	if count, err := s.SweepExpired(); err != nil {
+		return err
+	} else if count > 0 {
+		slog.Info("expired sessions recovered", "count", count)
 	}
 	server := &http.Server{Addr: address, Handler: api.New(s, api.Options{AdminToken: adminToken}), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 8192}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
