@@ -1,0 +1,20 @@
+[
+  {
+    "repository": "actions/checkout",
+    "tag_at_resolution": "v4",
+    "sha": "11d5960a326750d5838078e36cf38b85af677262",
+    "source": "https://api.github.com/repos/actions/checkout/git/ref/tags/v4"
+  },
+  {
+    "repository": "actions/setup-go",
+    "tag_at_resolution": "v5",
+    "sha": "40f1582b2485089dde7abd97c1529aa768e1baff",
+    "source": "https://api.github.com/repos/actions/setup-go/git/ref/tags/v5"
+  },
+  {
+    "repository": "subosito/flutter-action",
+    "tag_at_resolution": "v2",
+    "sha": "1a449444c387b1966244ae4d4f8c696479add0b2",
+    "source": "https://api.github.com/repos/subosito/flutter-action/git/ref/tags/v2"
+  }
+]

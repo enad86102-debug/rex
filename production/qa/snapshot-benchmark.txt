@@ -1,0 +1,12 @@
+goos: linux
+goarch: amd64
+pkg: rex/production/server/internal/service
+cpu: AMD EPYC 9V74 80-Core Processor
+BenchmarkSnapshotCopy/JSON_roundtrip_previous-3         	     409	   3065075 ns/op	  887137 B/op	    4021 allocs/op
+BenchmarkSnapshotCopy/JSON_roundtrip_previous-3         	     421	   3060785 ns/op	  882364 B/op	    4020 allocs/op
+BenchmarkSnapshotCopy/JSON_roundtrip_previous-3         	     307	   3295723 ns/op	  923858 B/op	    4022 allocs/op
+BenchmarkSnapshotCopy/isolated_typed_copy-3             	    7288	    163094 ns/op	  254800 B/op	    2009 allocs/op
+BenchmarkSnapshotCopy/isolated_typed_copy-3             	    8817	    161695 ns/op	  254801 B/op	    2009 allocs/op
+BenchmarkSnapshotCopy/isolated_typed_copy-3             	    6586	    161089 ns/op	  254801 B/op	    2009 allocs/op
+PASS
+ok  	rex/production/server/internal/service	7.239s

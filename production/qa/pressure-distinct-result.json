@@ -1,0 +1,27 @@
+{
+  "exactly_one_ready_effect_survives_reopen": true,
+  "go_version": "go1.27.2",
+  "health_failures": 0,
+  "heap_alloc_bytes_after": 3057328,
+  "heap_alloc_bytes_before": 434552,
+  "latency_ms_all_statuses": {
+    "p50": 0.521,
+    "p95": 3.129,
+    "p99": 50.035
+  },
+  "logical_cpus": 3,
+  "not_a_gameplay_or_player_capacity_benchmark": true,
+  "per_worker_interval_ms": 0,
+  "platform": "linux/amd64",
+  "requests": 4096,
+  "responses_per_second": 23941.436207596078,
+  "scenario": "isolated TLS waiting-room read + duplicate ready burst",
+  "seconds": 0.171084139,
+  "source_mode": "distinct",
+  "status_counts": {
+    "200": 4096
+  },
+  "total_allocated_bytes": 48409544,
+  "transport_or_unexpected_failures": 0,
+  "workers": 64
+}
