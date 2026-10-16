@@ -99,6 +99,36 @@ func TestVersionIdentityAndResultGuards(t *testing.T) {
 	}
 }
 
+func TestRandomizedDealsAlwaysSettleWithoutLosingCards(t *testing.T) {
+	for iteration := 0; iteration < 20; iteration++ {
+		first, err := cards.Shuffle(cards.Deck())
+		if err != nil {
+			t.Fatal(err)
+		}
+		m, err := NewCandidateMatch("randomized-candidate", testProfile(), testMembers, first)
+		if err != nil {
+			t.Fatal(err)
+		}
+		sequence := 1
+		chooseTest(t, m, Complex, sequence)
+		sequence++
+		playCompleteComplex(t, m, &sequence)
+		second, err := cards.Shuffle(cards.Deck())
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := m.AdvanceDeal(second); err != nil {
+			t.Fatal(err)
+		}
+		chooseTest(t, m, Trix, sequence)
+		sequence++
+		playCompleteTrix(t, m, &sequence)
+		if _, err := m.Replay(); err != nil {
+			t.Fatal("candidate replay failed", err)
+		}
+	}
+}
+
 func FuzzTrickWinnerAndPenalty(f *testing.F) {
 	f.Add([]byte{0, 1, 2, 3})
 	f.Add([]byte{51, 13, 26, 39})
