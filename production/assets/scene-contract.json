@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "status": "candidate_for_art_and_renderer_review",
+  "units": "metres",
+  "up_axis": "+Y",
+  "camera": {
+    "position": [0.0, 1.65, -3.4],
+    "target": [0.0, 0.74, 0.0]
+  },
+  "table": {
+    "centre": [0.0, 0.0, 0.0],
+    "playing_surface_height": 0.76,
+    "playing_surface_min_width": 1.1,
+    "playing_surface_min_depth": 0.75,
+    "dynamic_content_excluded_from_textures": [
+      "cards", "player_names", "turn_indicators", "controls", "invitation_codes"
+    ]
+  },
+  "seats": {
+    "NORTH": {"position": [0.0, 0.0, 1.8], "inward_yaw_degrees": 180},
+    "EAST": {"position": [1.8, 0.0, 0.0], "inward_yaw_degrees": 270},
+    "SOUTH": {"position": [0.0, 0.0, -1.8], "inward_yaw_degrees": 0},
+    "WEST": {"position": [-1.8, 0.0, 0.0], "inward_yaw_degrees": 90}
+  },
+  "themes": [
+    {"id": "emerald", "felt_srgb": "#0D604B", "wood_srgb": "#24170E", "metal_srgb": "#B6944B", "model": null, "release_approved": false},
+    {"id": "royal_black", "felt_srgb": "#17191D", "wood_srgb": "#17100E", "metal_srgb": "#BFA15A", "model": null, "release_approved": false},
+    {"id": "sapphire", "felt_srgb": "#123B6B", "wood_srgb": "#26190F", "metal_srgb": "#B99B58", "model": null, "release_approved": false},
+    {"id": "ruby", "felt_srgb": "#6E1E30", "wood_srgb": "#2A170F", "metal_srgb": "#BD9C53", "model": null, "release_approved": false},
+    {"id": "ivory", "felt_srgb": "#D9CFB4", "wood_srgb": "#433024", "metal_srgb": "#B69455", "model": null, "release_approved": false},
+    {"id": "purple", "felt_srgb": "#45305F", "wood_srgb": "#241620", "metal_srgb": "#B59A60", "model": null, "release_approved": false}
+  ],
+  "environments": [
+    {"id": "royal_hall", "model": null, "release_approved": false},
+    {"id": "wadi_rum", "model": null, "release_approved": false},
+    {"id": "petra", "model": null, "release_approved": false},
+    {"id": "aqaba", "model": null, "release_approved": false}
+  ]
+}
