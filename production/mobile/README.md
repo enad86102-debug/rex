@@ -27,7 +27,9 @@ flutter run --dart-define=REX_API_URL=https://YOUR-REVIEW-SERVER
 flutter build apk --debug
 ```
 
-البيئة الحالية لم تنتج APK: نُزّلت cmdline tools، لكن حزم API36 وأدوات
+**نجح debug APK في [GitHub CI](https://github.com/enad86102-debug/rex/actions/runs/38875799795)
+للـcommit c6959ec**. ليس AAB أو إصدارًا نهائيًا، ولا اختبار جهاز فعلي.
+محليًا لم تنتج البيئة APK: نُزّلت cmdline tools، لكن حزم API36 وأدوات
 البناء متوقفة عند ترخيص Android SDK الذي لم يُقبل نيابة عن الجهة. سؤال
 التفويض أُرسل للمستخدم. بعد قبول مسؤول مخوّل:
 
@@ -38,8 +40,9 @@ flutter build apk --debug
 ```
 
 قد يحتاج Gradle حزمة NDK التي يحددها Flutter؛ أي اتفاقيات إضافية يراجعها
-مخوّل. نجاح تحليل Dart لا يثبت صحة Kotlin أو Android manifest أو release
-build. Keystore لم يُختبر على جهاز/محاكي Android بعد.
+مخوّل. CI أثبت compile لكود Kotlin/Android الحالي، ولا يثبت سلوك Keystore
+على جهاز/محاكي أو release build. NDK المستخدم فيCI هو27.0.12077973
+وCMake3.22.1. راجع HANDOFF للفرق بين دليل البناء وقياسات الأداء الغائبة.
 
 ## تكامل حقيقي قابل للإعادة
 

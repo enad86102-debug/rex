@@ -65,7 +65,9 @@ sync للملف ثم rename ثم sync للمجلد. قفل نظام تشغيل �
   إقرارًا بأنه إصدار الإطلاق النهائي. legacy لم يُغيّر.
 - Android compile/target API 36؛ minSdk 23 لتوافق Android Keystore AES-GCM.
 - AGP 8.9.1، Kotlin 2.1.0، Gradle 8.12، JDK 21 (bytecode target 17).
-  Android لم يُبنَ بعد؛ التوافق الكامل يحتاج فحص بناء فعلي ومراجعة.
+  debug APK بُني بنجاح فيGitHub CI للـcommit c6959ec؛ NDK27.0.12077973
+  وCMake3.22.1. المحلي ما زال متوقفًا عندSDK/ترخيصه؛ التوافق على أجهزة
+  وrelease build يحتاج فحوصًا ومراجعة، لا يُستنتج من debug compilation.
 - Blender 4.3.2 متاح، واستورد GLB القديم بنجاح للفحص فقط.
 
 ## حدود السلامة والإطلاق

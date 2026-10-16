@@ -6,6 +6,7 @@
 
 - المستودع: `enad86102-debug/rex`؛ base المفحوص `1c6698b` على main.
 - الفرع: `production/v1-foundation`؛ لا merge أو force-push أو استبدال legacy.
+- commit التنفيذ المتحقق `c6959ec`؛ [مسودة PR#1](https://github.com/enad86102-debug/rex/pull/1).
 - الكود الجديد تحت `production/`، مع workflow جديد فقط في `.github/workflows/`.
 - لم تتغير `app/` أو `experiments/` أو `assets/` الأصلية أو وثائق الحوكمة.
 - مصدر التفويض: توجيه المستخدم التنفيذي الشامل في جلسة2026-10-16.
@@ -50,20 +51,37 @@
 | Blender4.3.2 | استيراد شخصية الشمال القديمة ناجح؛ 6024 مثلثًا، armatures0، actions0، UV0 |
 | Docker build | ناجح؛ image `sha256:40096b2de4c42f06bb650d6e67ea080806e84ae334548c18211aeec2b5c0bb54` |
 | Docker تشغيل/حفظ | user65532، rootfs read-only، cap-drop ALL، no-new-privileges؛ health/guest/table ثم restart وsession/table/receipt ناجحة على volume |
-| Android debug APK | **فشل**: Android SDK غير مكتمل؛ حزمAPI36/build-tools/platform-tools لم تُثبت لعدم قبول الاتفاقية |
-| Android release/AAB | **لم يُبنَ**؛ SDK/التوقيع/الهوية وعوائق المنتج لم تُحسم |
+| Android debug APK | **نجح على GitHub CI** للـcommit c6959ec؛ محليًا فشل لعدم اكتمالSDK/ترخيصه؛ النتيجتان منفصلتان |
+| Android release/AAB | **لم يُبنَ**؛ التوقيع/الهوية وعوائق المنتج لم تُحسم |
 | real-device/performance/visual acceptance | **لم تُجرَ**؛ لا Android device ولا أصول نهائية أو موافقة الفريق |
 
 اختبار corrupt-store فشل أولًا وكشف أن unmarshal فوق defaults كان يخفي
 حقولًا مفقودة؛ أُصلح بتصفير loaded state قبل decode ثم أعيدت الفحوص ونجحت.
-تجنب تقديم نتائج قبل الإصلاح كنجاح. Kotlin وKeystore وGradle لم يُبنَوا بعد.
+تجنب تقديم نتائج قبل الإصلاح كنجاح. Kotlin وGradle بُنيا عبر CI؛ سلوك
+Keystore على جهاز فعلي لم يُختبر.
+
+### دليل CI الإضافي
+
+[Run 38875799795](https://github.com/enad86102-debug/rex/actions/runs/38875799795)
+نجح بالكامل للـcommit `c6959ec`، بما فيه اختبارات Go/Flutter والتكامل و
+`flutter build apk --debug --no-pub`. السجل عند08:50:43UTC يؤكد إنتاج
+`build/app/outputs/flutter-apk/app-debug.apk`. Gradle assembleDebug استغرق
+173.3s؛ هذا زمن بناء، **ليس** قياس أداء اللعبة. NDK27.0.12077973 و
+CMake3.22.1 نُزّلا في runner بترخيص موجود ومقبول مسبقًا فيه. لم نقبل
+الاتفاقية المحلية؛ سؤالها ما زال معلقًا. لم تُنشر حزمة عامة أو تُرفع إلىPlay،
+ولم يضف workflow خطوة حفظ APK كـartifact؛ دليل البناء في السجل والكود قابل للإعادة.
+
+workflow القديم [Run38875799698](https://github.com/enad86102-debug/rex/actions/runs/38875799698)
+فشل في formatting للملف `app/rex_mobile/test/rex_app_test.dart`، الذي
+يطابقmain ولم يُعدّل في الفرع. فحوص analyze/test/build القديمة تخطيت بعد
+ذلك؛ لا تُعلن نجاح جميع workflows. لم نغيّر legacy لمجرد تنسيق ملفه.
 
 ## حالة الخادم والأصول والعميل
 
 - الخادم: قابل للتشغيل محليًا وفي حاوية، لا نشر إنتاج ولا قاعدة بيانات نهائية.
   snapshot أحادي العملية مرشح مراجعة؛ حدوده وسياساته في ENGINEERING_REVIEW.
-- العميل: الوظائف المدرجة متصلة ومختبرة على Flutter host runner؛ لا APK
-  ولا أربعة أجهزة Android ولا renderer3D أو تحكم أوراق أو مسار مباراة.
+- العميل: الوظائف المدرجة متصلة ومختبرة على Flutter host runner؛ debugAPK
+  بُني فيCI، لكن لا أربعة أجهزة Android ولا renderer3D أو تحكم أوراق أو مباراة.
 - الأصول: الشعار الأصلي فقط منقول دون تعديل؛ لا شخصيات/بيئات إنتاجية مدمجة.
   مواصفات التسليم والخطوات الفعلية للفنان/الفني في ASSET_PRODUCTION.
 - الأمان: لا أموال أو شراء أو أسرار إنتاج. مكتبة Go القياسية فقط. سرية
@@ -78,7 +96,8 @@
 2. **ترخيص Android SDK:** نُزّلت cmdline tools؛ sdkmanager يطلب اتفاقية
    Google، بند2.4 يشترط صلاحية إلزام الجهة. لم تُقبل نيابة عن الفريق.
    أُرسل سؤال تفويض محدد؛ لا رد مسجل عند كتابة التسليم. لا تعتبر مرور الوقت
-   موافقة. بعد التفويض، ثبّت الحزم ثم اختبر البناء وnative Keystore.
+   موافقة. العائق محلي فقط بعد نجاح debug build فيCI؛ بعد التفويض ثبّت
+   الحزم للتحقق المحلي ثم اختبر native Keystore على Android.
 3. **مراجعة عبدالعزيز:** persistence/auth/transport للمباريات/renderer/toolchain
    ومصفوفة الأجهزة/الميزانيات؛ الكود الحالي ليس إقرار اعتماد.
 4. **أصول حقيقية:** فنانون/مصادر مرخصة ومراجعة بشرية للشخصيات والبيئات
@@ -89,8 +108,8 @@
 ## الخطوة التالية بدقة
 
 - تحقق من الردود الجديدة أولًا، مع الحفاظ على الأسئلة غير المحسومة.
-- عند تفويض SDK: شغّل sdkmanager للحزم36، ثم `flutter doctor -v` وdebug
-  build؛ أصلح أخطاء Kotlin/Gradle إن ظهرت قبل ادعاء توافق الأدوات، واختبر
+- عند تفويض SDK: شغّل sdkmanager للحزم36، ثم `flutter doctor -v` وأعد
+  debug build محليًا؛ البناء نفسه نجح فيCI. اختبر
   Keystore وbackup/lifecycle على Android. لا تنتج signing keys أو تقبل
   اتفاقيات إضافية غير مفوضة.
 - عند ورود عقد لعبة معتمد: احفظ النسخة ومصدر الموافقة، ثم نفّذ engine
