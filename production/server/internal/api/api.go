@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"rex/production/server/internal/service"
@@ -29,7 +30,12 @@ type handler struct {
 	adminHash    [32]byte
 	adminEnabled bool
 	inflight     chan struct{}
+	adminFlight  chan struct{}
 	nextSweep    time.Time
+	startedAt    time.Time
+	overloaded   atomic.Uint64
+	rateLimited  atomic.Uint64
+	admitted     atomic.Uint64
 }
 
 type Options struct {
@@ -40,12 +46,13 @@ type Options struct {
 }
 
 func New(s *service.Service, options ...Options) http.Handler {
-	h := &handler{s: s, buckets: make(map[string]bucket)}
+	h := &handler{s: s, buckets: make(map[string]bucket), startedAt: time.Now()}
 	capacity := 64
 	if len(options) > 0 && options[0].MaxInFlight > 0 {
 		capacity = min(options[0].MaxInFlight, 256)
 	}
 	h.inflight = make(chan struct{}, capacity)
+	h.adminFlight = make(chan struct{}, 1)
 	if len(options) > 0 && len(options[0].AdminToken) >= 32 {
 		h.adminHash = sha256.Sum256([]byte(options[0].AdminToken))
 		h.adminEnabled = true
@@ -63,6 +70,7 @@ func New(s *service.Service, options ...Options) http.Handler {
 	mux.HandleFunc("POST /v1/tables/{id}/start", h.action("start"))
 	if h.adminEnabled {
 		mux.HandleFunc("GET /v1/admin/overview", h.overview)
+		mux.HandleFunc("GET /v1/admin/runtime", h.runtime)
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "no-store")
@@ -70,11 +78,23 @@ func New(s *service.Service, options ...Options) http.Handler {
 		w.Header().Set("Referrer-Policy", "no-referrer")
 		// Health remains available during application overload. The listener and
 		// TLS proxy still need independent connection/header/body limits.
-		if r.URL.Path != "/healthz" {
+		if r.URL.Path == "/v1/admin/runtime" && r.Method == http.MethodGet && h.adminEnabled && h.adminAuthorized(r) {
+			// Keep one bounded monitoring slot available during public overload.
+			select {
+			case h.adminFlight <- struct{}{}:
+				defer func() { <-h.adminFlight }()
+			default:
+				h.overloaded.Add(1)
+				w.Header().Set("Retry-After", "1")
+				write(w, 503, map[string]string{"error": "server_busy"})
+				return
+			}
+		} else if r.URL.Path != "/healthz" {
 			select {
 			case h.inflight <- struct{}{}:
 				defer func() { <-h.inflight }()
 			default:
+				h.overloaded.Add(1)
 				w.Header().Set("Retry-After", "1")
 				write(w, 503, map[string]string{"error": "server_busy"})
 				return
@@ -83,21 +103,47 @@ func New(s *service.Service, options ...Options) http.Handler {
 		// Do not trust arbitrary X-Forwarded-For headers. Proxy rate limiting is
 		// additionally required at deployment when clients share a proxy address.
 		if !h.allow(r) {
+			h.rateLimited.Add(1)
 			w.Header().Set("Retry-After", "60")
 			write(w, 429, map[string]string{"error": "rate_limited"})
 			return
 		}
+		h.admitted.Add(1)
 		mux.ServeHTTP(w, r)
 	})
 }
 
 func (h *handler) overview(w http.ResponseWriter, r *http.Request) {
-	got := sha256.Sum256([]byte(bearer(r)))
-	if subtle.ConstantTimeCompare(got[:], h.adminHash[:]) != 1 {
+	if !h.adminAuthorized(r) {
 		fail(w, service.ErrAuth)
 		return
 	}
 	write(w, 200, h.s.Overview())
+}
+
+func (h *handler) adminAuthorized(r *http.Request) bool {
+	got := sha256.Sum256([]byte(bearer(r)))
+	return subtle.ConstantTimeCompare(got[:], h.adminHash[:]) == 1
+}
+
+// Runtime counters contain no player, address, token or table identifiers.
+// They reset on process restart and only supplement durable service audit.
+func (h *handler) runtime(w http.ResponseWriter, r *http.Request) {
+	if !h.adminAuthorized(r) {
+		fail(w, service.ErrAuth)
+		return
+	}
+	h.mu.Lock()
+	buckets := len(h.buckets)
+	h.mu.Unlock()
+	write(w, 200, map[string]any{
+		"uptime_seconds": int(time.Since(h.startedAt).Seconds()),
+		"in_flight":      len(h.inflight), "max_in_flight": cap(h.inflight),
+		"rate_limit_buckets": buckets,
+		"admitted_total":     h.admitted.Load(),
+		"rate_limited_total": h.rateLimited.Load(),
+		"overloaded_total":   h.overloaded.Load(),
+	})
 }
 
 func (h *handler) allow(r *http.Request) bool {
@@ -112,6 +158,10 @@ func (h *handler) allow(r *http.Request) bool {
 	if r.URL.Path == "/v1/guests" {
 		ip = "guest:" + ip
 		limit = 5
+	} else if (r.URL.Path == "/v1/admin/overview" || r.URL.Path == "/v1/admin/runtime") && h.adminEnabled && h.adminAuthorized(r) {
+		// An operator at the same proxy address as players needs independent
+		// visibility when the public bucket is exhausted.
+		ip = "admin:" + ip
 	}
 	h.mu.Lock()
 	defer h.mu.Unlock()
@@ -142,7 +192,11 @@ func (h *handler) allow(r *http.Request) bool {
 }
 
 func bearer(r *http.Request) string {
-	value := r.Header.Get("Authorization")
+	values := r.Header.Values("Authorization")
+	if len(values) != 1 {
+		return ""
+	}
+	value := values[0]
 	if !strings.HasPrefix(value, "Bearer ") {
 		return ""
 	}

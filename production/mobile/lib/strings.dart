@@ -33,6 +33,7 @@ abstract final class RexStrings {
     'conflict' => 'تغيّرت حالة الطاولة. حُدّثت البيانات؛ أعد المحاولة.',
     'invalid_input' => 'تحقّق من البيانات وأعد المحاولة.',
     'rate_limited' => 'طلبات كثيرة. انتظر دقيقة ثم أعد المحاولة.',
+    'server_busy' => 'الخدمة مشغولة الآن. انتظر قليلًا ثم أعد المحاولة.',
     'pending_action' => 'هناك طلب لم تُحسم نتيجته. أعد المحاولة أولًا.',
     'rules_not_approved' => 'اللعب غير متاح حاليًا.',
     'secure_storage_or_response_failed' =>

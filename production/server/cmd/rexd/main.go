@@ -61,9 +61,31 @@ func run() error {
 	if adminToken != "" && len(adminToken) < 32 {
 		return errors.New("REX_ADMIN_TOKEN must contain at least 32 bytes")
 	}
+	if count, err := s.SweepExpired(); err != nil {
+		return err
+	} else if count > 0 {
+		slog.Info("expired sessions recovered", "count", count)
+	}
 	server := &http.Server{Addr: address, Handler: api.New(s, api.Options{AdminToken: adminToken}), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 8192}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+	go func() {
+		ticker := time.NewTicker(5 * time.Minute)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				count, err := s.SweepExpired()
+				if err != nil {
+					slog.Error("expired session sweep failed", "reason", err)
+				} else if count > 0 {
+					slog.Info("expired sessions recovered", "count", count)
+				}
+			}
+		}
+	}()
 	done := make(chan error, 1)
 	go func() {
 		if cert != "" {
