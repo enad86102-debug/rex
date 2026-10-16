@@ -88,4 +88,8 @@ Android تكمل المباراة، ثم مراجعة الفن والإصدار.
 - `check_security.sh`: Staticcheck وgovulncheck نجحا دون نتائج معلنة،
   gosec صفر findings وصفر analysis errors باستثناءي G304 السابقين
   الموثقين، وGitleaks لم يجد أسرارًا في التاريخ والفرق المفحوصين.
-- CI يُضاف بعد اكتماله، دون نسبة نجاح مسبقة.
+- [CI run 38945997607](https://github.com/enad86102-debug/rex/actions/runs/38945997607)
+  على commit الكود `153a913`: أربع jobs ناجحة. شمل foundation اختبارات
+  Go الجديدة وفحوص Python والأمان وTLS وربط Flutter/Go وبناء APK debug
+  داخلي. نجح Android native على محاكي API36، ونجح مسارا legacy.
+  هذه نتيجة حزمة مرشحة؛ لم يختبر CI مباراة Trix حية على Android.
