@@ -92,10 +92,18 @@ jobs:
           printf 'no\n' | "$rex_android_sdk/cmdline-tools/latest/bin/avdmanager" create avd --force --name rex-qa --package 'system-images;android-36;google_apis;x86_64' --device pixel_6
       - name: Test real Android vault and real server session
         run: |
-          "$REX_ANDROID_SDK/emulator/emulator" -avd rex-qa -port 5554 -memory 2048 -cores 2 -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect >"$RUNNER_TEMP/rex-emulator.log" 2>&1 &
+          "$REX_ANDROID_SDK/emulator/emulator" -avd rex-qa -port 5554 -memory 4096 -cores 2 -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader -feature -Vulkan >"$RUNNER_TEMP/rex-emulator.log" 2>&1 &
           rex_emulator_pid=$!
           trap 'adb -s emulator-5554 emu kill >/dev/null 2>&1 || true; kill "$rex_emulator_pid" 2>/dev/null || true' EXIT
-          timeout 180 adb -s emulator-5554 wait-for-device
+          sleep 2
+          if ! kill -0 "$rex_emulator_pid" 2>/dev/null; then
+            tail -n 100 "$RUNNER_TEMP/rex-emulator.log"
+            exit 1
+          fi
+          if ! timeout 180 adb -s emulator-5554 wait-for-device; then
+            tail -n 100 "$RUNNER_TEMP/rex-emulator.log"
+            exit 1
+          fi
           for ((attempt=0;attempt<90;attempt++)); do
             if [[ "$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" == 1 ]]; then break; fi
             sleep 2
