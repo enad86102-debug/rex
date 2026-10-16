@@ -1,0 +1,28 @@
+[Unit]
+Description=REX isolated service
+After=network.target
+
+[Service]
+Type=simple
+User=rex
+Group=rex
+WorkingDirectory=/var/lib/rex
+Environment=REX_LISTEN=127.0.0.1:8080
+Environment=REX_STORE=/var/lib/rex/state.json
+EnvironmentFile=-/etc/rex/service.env
+ExecStart=/opt/rex/rexd
+Restart=on-failure
+RestartSec=3
+StateDirectory=rex
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+ReadWritePaths=/var/lib/rex
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target
