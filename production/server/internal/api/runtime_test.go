@@ -49,7 +49,14 @@ func TestRuntimeCountersRequireAdminAndBoundedValues(t *testing.T) {
 	if _, err := writer.Write([]byte("{")); err != nil {
 		t.Fatal(err)
 	}
+	monitor := httptest.NewRequest("GET", "/v1/admin/runtime", nil)
+	monitor.Header.Set("Authorization", "Bearer "+secret)
 	w := httptest.NewRecorder()
+	h.ServeHTTP(w, monitor)
+	if w.Code != 200 || !strings.Contains(w.Body.String(), `"in_flight":1`) {
+		t.Fatal("operator lost runtime visibility during public overload")
+	}
+	w = httptest.NewRecorder()
 	h.ServeHTTP(w, httptest.NewRequest("GET", "/v1/me", nil))
 	if w.Code != 503 {
 		t.Fatal("admission not measured")

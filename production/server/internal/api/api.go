@@ -30,6 +30,7 @@ type handler struct {
 	adminHash    [32]byte
 	adminEnabled bool
 	inflight     chan struct{}
+	adminFlight  chan struct{}
 	nextSweep    time.Time
 	startedAt    time.Time
 	overloaded   atomic.Uint64
@@ -51,6 +52,7 @@ func New(s *service.Service, options ...Options) http.Handler {
 		capacity = min(options[0].MaxInFlight, 256)
 	}
 	h.inflight = make(chan struct{}, capacity)
+	h.adminFlight = make(chan struct{}, 1)
 	if len(options) > 0 && len(options[0].AdminToken) >= 32 {
 		h.adminHash = sha256.Sum256([]byte(options[0].AdminToken))
 		h.adminEnabled = true
@@ -76,7 +78,18 @@ func New(s *service.Service, options ...Options) http.Handler {
 		w.Header().Set("Referrer-Policy", "no-referrer")
 		// Health remains available during application overload. The listener and
 		// TLS proxy still need independent connection/header/body limits.
-		if r.URL.Path != "/healthz" {
+		if r.URL.Path == "/v1/admin/runtime" && r.Method == http.MethodGet && h.adminEnabled && h.adminAuthorized(r) {
+			// Keep one bounded monitoring slot available during public overload.
+			select {
+			case h.adminFlight <- struct{}{}:
+				defer func() { <-h.adminFlight }()
+			default:
+				h.overloaded.Add(1)
+				w.Header().Set("Retry-After", "1")
+				write(w, 503, map[string]string{"error": "server_busy"})
+				return
+			}
+		} else if r.URL.Path != "/healthz" {
 			select {
 			case h.inflight <- struct{}{}:
 				defer func() { <-h.inflight }()
