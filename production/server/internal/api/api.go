@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"mime"
 	"net"
 	"net/http"
 	"strings"
@@ -152,16 +153,58 @@ func fail(w http.ResponseWriter, err error) {
 }
 
 func decode(w http.ResponseWriter, r *http.Request, value any) error {
-	if r.Header.Get("Content-Type") != "application/json" {
+	mediaType, parameters, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+	if err != nil || mediaType != "application/json" || (parameters["charset"] != "" && !strings.EqualFold(parameters["charset"], "utf-8")) {
 		return service.ErrInput
 	}
 	r.Body = http.MaxBytesReader(w, r.Body, 4096)
+	// Commands are flat JSON objects. Reject null, duplicate keys and case
+	// aliases rather than relying on encoding/json's last-value/case matching.
 	d := json.NewDecoder(r.Body)
-	d.DisallowUnknownFields()
-	if err := d.Decode(value); err != nil {
+	start, err := d.Token()
+	if err != nil || start != json.Delim('{') {
+		return service.ErrInput
+	}
+	fields := map[string]json.RawMessage{}
+	allowed := map[string]bool{}
+	switch value.(type) {
+	case *service.Command:
+		for _, key := range []string{"action_id", "expected_version", "game", "invite", "ready"} {
+			allowed[key] = true
+		}
+	case *struct{}:
+	default:
+		return service.ErrInput
+	}
+	for d.More() {
+		key, err := d.Token()
+		if err != nil {
+			return service.ErrInput
+		}
+		name, ok := key.(string)
+		if !ok || !allowed[name] {
+			return service.ErrInput
+		}
+		if _, exists := fields[name]; exists {
+			return service.ErrInput
+		}
+		var raw json.RawMessage
+		if err := d.Decode(&raw); err != nil || string(raw) == "null" {
+			return service.ErrInput
+		}
+		fields[name] = raw
+	}
+	if end, err := d.Token(); err != nil || end != json.Delim('}') {
 		return service.ErrInput
 	}
 	if err := d.Decode(new(any)); !errors.Is(err, io.EOF) {
+		return service.ErrInput
+	}
+	data, err := json.Marshal(fields)
+	if err != nil {
+		return service.ErrInput
+	}
+	if err := json.Unmarshal(data, value); err != nil {
 		return service.ErrInput
 	}
 	return nil

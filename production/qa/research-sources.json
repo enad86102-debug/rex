@@ -1,0 +1,122 @@
+[
+  {
+    "repo": "securego/gosec",
+    "url": "https://github.com/securego/gosec",
+    "license": "Apache-2.0",
+    "archived": false,
+    "pushed_at": "2026-10-15T13:34:45Z",
+    "description": "Go security checker"
+  },
+  {
+    "repo": "dominikh/go-tools",
+    "url": "https://github.com/dominikh/go-tools",
+    "license": "MIT",
+    "archived": false,
+    "pushed_at": "2026-10-12T13:58:51Z",
+    "description": "Staticcheck - The advanced Go linter"
+  },
+  {
+    "repo": "gitleaks/gitleaks",
+    "url": "https://github.com/gitleaks/gitleaks",
+    "license": "MIT",
+    "archived": false,
+    "pushed_at": "2026-09-30T04:14:02Z",
+    "description": "Find secrets with Gitleaks \ud83d\udd11"
+  },
+  {
+    "repo": "KhronosGroup/glTF-Validator",
+    "url": "https://github.com/KhronosGroup/glTF-Validator",
+    "license": "Apache-2.0",
+    "archived": false,
+    "pushed_at": "2026-10-06T19:02:48Z",
+    "description": "Tool to validate glTF assets."
+  },
+  {
+    "repo": "leancodepl/patrol",
+    "url": "https://github.com/leancodepl/patrol",
+    "license": "Apache-2.0",
+    "archived": false,
+    "pushed_at": "2026-10-15T13:49:55Z",
+    "description": "Flutter-first UI testing framework. Ready for action!"
+  },
+  {
+    "repo": "flutter/flutter",
+    "url": "https://github.com/flutter/flutter",
+    "license": "BSD-3-Clause",
+    "archived": false,
+    "pushed_at": "2026-10-16T05:42:27Z",
+    "description": "Flutter makes it easy and fast to build beautiful apps for mobile and beyond"
+  },
+  {
+    "repo": "OWASP/masvs",
+    "url": "https://github.com/OWASP/masvs",
+    "license": "CC-BY-SA-4.0",
+    "archived": false,
+    "pushed_at": "2026-09-21T08:50:59Z",
+    "description": "The OWASP MASVS (Mobile Application Security Verification Standard) is the industry standard for mobile app security."
+  },
+  {
+    "repo": "OWASP/mastg",
+    "url": "https://github.com/OWASP/mastg",
+    "license": "CC-BY-SA-4.0",
+    "archived": false,
+    "pushed_at": "2026-10-10T02:01:53Z",
+    "description": "The OWASP Mobile Application Security Testing Guide (MASTG) is a comprehensive manual for mobile app security testing and reverse engineering. It describes technical processes for verifying the OWASP Mobile Security Weakness Enumeration (MASWE) weaknesses, which are in alignment with the OWASP MASVS."
+  },
+  {
+    "repo": "MobSF/Mobile-Security-Framework-MobSF",
+    "url": "https://github.com/MobSF/Mobile-Security-Framework-MobSF",
+    "license": "GPL-3.0",
+    "archived": false,
+    "pushed_at": "2026-10-14T19:20:16Z",
+    "description": "Mobile Security Framework (MobSF) is an automated, all-in-one mobile application (Android/iOS/Windows) pen-testing, malware analysis and security assessment framework capable of performing static and dynamic analysis."
+  },
+  {
+    "repo": "zaproxy/zaproxy",
+    "url": "https://github.com/zaproxy/zaproxy",
+    "license": "Apache-2.0",
+    "archived": false,
+    "pushed_at": "2026-10-15T14:54:29Z",
+    "description": "The ZAP by Checkmarx Core project"
+  },
+  {
+    "repo": "schemathesis/schemathesis",
+    "url": "https://github.com/schemathesis/schemathesis",
+    "license": "MIT",
+    "archived": false,
+    "pushed_at": "2026-10-16T08:59:43Z",
+    "description": "Catch API bugs before your users do"
+  },
+  {
+    "repo": "grafana/k6",
+    "url": "https://github.com/grafana/k6",
+    "license": "AGPL-3.0",
+    "archived": false,
+    "pushed_at": "2026-10-16T08:58:39Z",
+    "description": "A modern load testing tool, using Go and JavaScript"
+  },
+  {
+    "repo": "aquasecurity/trivy",
+    "url": "https://github.com/aquasecurity/trivy",
+    "license": "Apache-2.0",
+    "archived": false,
+    "pushed_at": "2026-10-16T07:48:57Z",
+    "description": "Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more"
+  },
+  {
+    "repo": "donmccurdy/glTF-Transform",
+    "url": "https://github.com/donmccurdy/glTF-Transform",
+    "license": "MIT",
+    "archived": false,
+    "pushed_at": "2026-10-13T21:23:08Z",
+    "description": "glTF 2.0 SDK for JavaScript and TypeScript, on Web and Node.js."
+  },
+  {
+    "repo": "zeux/meshoptimizer",
+    "url": "https://github.com/zeux/meshoptimizer",
+    "license": "MIT",
+    "archived": false,
+    "pushed_at": "2026-10-14T17:27:17Z",
+    "description": "Mesh optimization library that makes meshes smaller and faster to render"
+  }
+]

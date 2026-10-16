@@ -129,6 +129,7 @@ func Open(path string) (*Service, error) {
 	s := &Service{path: path, now: time.Now, s: state{Schema: 1,
 		Players: map[string]Player{}, Sessions: map[string]Session{},
 		Tables: map[string]Table{}, Receipts: map[string]Receipt{}}}
+	// #nosec G304 -- operator-configured service-owned store; never request input.
 	data, err := os.ReadFile(path)
 	if err == nil {
 		s.s = state{}
@@ -137,6 +138,9 @@ func Open(path string) (*Service, error) {
 		}
 		if s.s.Schema != 1 || s.s.Players == nil || s.s.Sessions == nil || s.s.Tables == nil || s.s.Receipts == nil {
 			return nil, errors.New("unsupported or incomplete store")
+		}
+		if err := validateState(s.s); err != nil {
+			return nil, err
 		}
 	} else if !errors.Is(err, os.ErrNotExist) {
 		return nil, err
@@ -184,12 +188,10 @@ func (s *Service) transaction(change func(*state) error) error {
 	}
 	defer os.Remove(f.Name())
 	if _, err = f.Write(data); err != nil {
-		f.Close()
-		return err
+		return errors.Join(err, f.Close())
 	}
 	if err = f.Sync(); err != nil {
-		f.Close()
-		return err
+		return errors.Join(err, f.Close())
 	}
 	if err = f.Close(); err != nil {
 		return err
@@ -292,6 +294,14 @@ func (s *Service) Logout(token string) error {
 		return err
 	}
 	return s.transaction(func(st *state) error {
+		// Logout is an explicit departure from waiting rooms, not a gameplay
+		// disconnection policy. Enforce it even when the client skips /leave.
+		if id := tableFor(st, session.PlayerID); id != "" {
+			if _, err := releaseWaitingSeat(st, id, session.PlayerID); err != nil {
+				return err
+			}
+			st.Audit = appendAudit(st.Audit, Audit{At: s.now().UTC(), Actor: session.PlayerID, Operation: "table.leave", TableID: id})
+		}
 		delete(st.Sessions, digest(token))
 		st.Audit = appendAudit(st.Audit, Audit{At: s.now().UTC(), Actor: session.PlayerID, Operation: "session.revoked"})
 		return nil
@@ -429,33 +439,15 @@ func (s *Service) Act(token, operation, id string, c Command) (Table, error) {
 			}
 			if operation == "ready" {
 				t.Seats[seat].Ready = c.Ready
-			} else {
-				t.Seats[seat] = nil
-				resetReady(&t)
-				if t.OwnerID == player {
-					t.OwnerID = ""
-					for _, remaining := range t.Seats {
-						if remaining != nil {
-							t.OwnerID = remaining.PlayerID
-							break
-						}
-					}
-				}
-				// Rotate bearer invitation whenever membership changes by leaving.
-				invite, e := randomID(16)
-				if e != nil {
-					return e
-				}
-				t.Invite = invite
-			}
-			t.Version++
-			result = t
-			if t.OwnerID == "" {
-				delete(st.Tables, id)
-			} else {
+				t.Version++
 				st.Tables[id] = t
-			}
-			if operation == "leave" {
+				result = t
+			} else {
+				var err error
+				result, err = releaseWaitingSeat(st, id, player)
+				if err != nil {
+					return err
+				}
 				result.Invite = ""
 			}
 		default:
@@ -469,6 +461,36 @@ func (s *Service) Act(token, operation, id string, c Command) (Table, error) {
 		return Table{}, err
 	}
 	return cloneTable(result), nil
+}
+
+func releaseWaitingSeat(st *state, id, player string) (Table, error) {
+	t, ok := st.Tables[id]
+	if !ok || member(t, player) < 0 {
+		return Table{}, ErrNotFound
+	}
+	invite, err := randomID(16)
+	if err != nil {
+		return Table{}, err
+	}
+	t.Seats[member(t, player)] = nil
+	resetReady(&t)
+	if t.OwnerID == player {
+		t.OwnerID = ""
+		for _, seat := range t.Seats {
+			if seat != nil {
+				t.OwnerID = seat.PlayerID
+				break
+			}
+		}
+	}
+	t.Invite = invite
+	t.Version++
+	if t.OwnerID == "" {
+		delete(st.Tables, id)
+	} else {
+		st.Tables[id] = t
+	}
+	return t, nil
 }
 
 func resetReady(t *Table) {

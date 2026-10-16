@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -20,7 +21,14 @@ abstract interface class RexTransport {
 }
 
 class RexApi implements RexTransport {
-  RexApi(String url, {bool allowLoopbackHttp = false}) : base = Uri.parse(url) {
+  RexApi(
+    String url, {
+    bool allowLoopbackHttp = false,
+    this.requestTimeout = const Duration(seconds: 12),
+  }) : base = Uri.parse(url) {
+    if (requestTimeout <= Duration.zero) {
+      throw ArgumentError.value(requestTimeout);
+    }
     if (base.scheme != 'https' &&
         !(allowLoopbackHttp &&
             base.scheme == 'http' &&
@@ -38,6 +46,7 @@ class RexApi implements RexTransport {
   }
 
   final Uri base;
+  final Duration requestTimeout;
   final HttpClient _http = HttpClient();
 
   @override
@@ -48,12 +57,7 @@ class RexApi implements RexTransport {
     Map<String, dynamic>? body,
   }) async {
     try {
-      return await _request(
-        method,
-        path,
-        token: token,
-        body: body,
-      ).timeout(const Duration(seconds: 12));
+      return await _request(method, path, token: token, body: body);
     } on ApiFailure {
       rethrow;
     } catch (_) {
@@ -67,31 +71,89 @@ class RexApi implements RexTransport {
     String? token,
     Map<String, dynamic>? body,
   }) async {
-    final request = await _http.openUrl(method, base.resolve(path));
-    request.followRedirects = false; // Never forward a bearer to another host.
-    if (token != null) request.headers.set('Authorization', 'Bearer $token');
-    if (body != null) {
-      request.headers.set('Content-Type', 'application/json');
-      request.write(jsonEncode(body));
+    final relative = Uri.parse(path);
+    final target = base.resolveUri(relative);
+    if (!path.startsWith('/') ||
+        path.startsWith('//') ||
+        relative.hasScheme ||
+        relative.hasAuthority ||
+        relative.hasQuery ||
+        relative.hasFragment ||
+        target.origin != base.origin ||
+        relative.pathSegments.any(
+          (segment) =>
+              segment == '..' ||
+              segment == '.' ||
+              segment.contains('/') ||
+              segment.contains('\\'),
+        )) {
+      throw const ApiFailure('invalid_path');
     }
-    final response = await request.close();
-    if (response.statusCode == 204) {
-      await response.drain<void>();
-      return {};
+    final elapsed = Stopwatch()..start();
+    Duration remaining() {
+      final left = requestTimeout - elapsed.elapsed;
+      if (left <= Duration.zero) throw TimeoutException('request deadline');
+      return left;
     }
-    final bytes = <int>[];
-    await for (final chunk in response) {
-      bytes.addAll(chunk);
-      if (bytes.length > 65536) throw const ApiFailure('invalid_response');
-    }
-    final result = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw ApiFailure(
-        result['error'] as String? ?? 'request_failed',
-        status: response.statusCode,
+
+    HttpClientRequest? request;
+    StreamIterator<List<int>>? chunks;
+    var expired = false;
+    try {
+      final opening = _http.openUrl(method, target);
+      // Future.timeout does not cancel its source. Abort a late-opened request
+      // too, so an expired operation cannot retain a live pooled connection.
+      unawaited(
+        opening.then<void>((value) {
+          if (expired) value.abort();
+        }, onError: (Object _, StackTrace __) {}),
       );
+      request = await opening.timeout(remaining());
+      request.followRedirects = false;
+      if (token != null) request.headers.set('Authorization', 'Bearer $token');
+      if (body != null) {
+        request.headers.set('Content-Type', 'application/json');
+        request.write(jsonEncode(body));
+      }
+      final response = await request.close().timeout(remaining());
+      chunks = StreamIterator(response);
+      final bytes = <int>[];
+      while (await chunks.moveNext().timeout(remaining())) {
+        if (bytes.length + chunks.current.length > 65536) {
+          throw const ApiFailure('invalid_response');
+        }
+        bytes.addAll(chunks.current);
+      }
+      if (response.statusCode == 204) return {};
+      final successful =
+          response.statusCode >= 200 && response.statusCode < 300;
+      Map<String, dynamic> result;
+      try {
+        result = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+      } catch (_) {
+        throw ApiFailure(
+          successful ? 'invalid_response' : 'request_failed',
+          status: successful ? 0 : response.statusCode,
+        );
+      }
+      if (!successful) {
+        throw ApiFailure(
+          result['error'] is String
+              ? result['error'] as String
+              : 'request_failed',
+          status: response.statusCode,
+        );
+      }
+      return result;
+    } on TimeoutException {
+      expired = true;
+      request?.abort();
+      rethrow;
+    } finally {
+      // Cancelling the response subscription tears down stalled/oversized
+      // bodies instead of leaving reads running after the caller has failed.
+      await chunks?.cancel();
     }
-    return result;
   }
 
   @override
