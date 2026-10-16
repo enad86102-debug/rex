@@ -82,14 +82,21 @@ jobs:
         run: |
           # No yes, --licenses, or implicit agreement acceptance.
           rex_android_sdk="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          rex_android_user_home="$RUNNER_TEMP/rex-android-user"
+          rex_avd_home="$rex_android_user_home/avd"
+          mkdir -p "$rex_avd_home"
           echo "REX_ANDROID_SDK=$rex_android_sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_USER_HOME=$rex_android_user_home" >> "$GITHUB_ENV"
+          echo "ANDROID_AVD_HOME=$rex_avd_home" >> "$GITHUB_ENV"
           printf '%s\n' "$rex_android_sdk/platform-tools" "$rex_android_sdk/emulator" "$rex_android_sdk/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
           "$rex_android_sdk/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$rex_android_sdk" --install emulator 'system-images;android-36;google_apis;x86_64' </dev/null
           test -x "$rex_android_sdk/emulator/emulator"
           test -d "$rex_android_sdk/system-images/android-36/google_apis/x86_64"
           test -e /dev/kvm
           sudo chown "$USER" /dev/kvm
-          printf 'no\n' | "$rex_android_sdk/cmdline-tools/latest/bin/avdmanager" create avd --force --name rex-qa --package 'system-images;android-36;google_apis;x86_64' --device pixel_6
+          printf 'no\n' | ANDROID_USER_HOME="$rex_android_user_home" ANDROID_AVD_HOME="$rex_avd_home" "$rex_android_sdk/cmdline-tools/latest/bin/avdmanager" create avd --force --name rex-qa --path "$rex_avd_home/rex-qa.avd" --package 'system-images;android-36;google_apis;x86_64' --device pixel_6
+          ANDROID_AVD_HOME="$rex_avd_home" "$rex_android_sdk/emulator/emulator" -list-avds | grep -Fx rex-qa
+          "$rex_android_sdk/platform-tools/adb" start-server
       - name: Test real Android vault and real server session
         run: |
           "$REX_ANDROID_SDK/emulator/emulator" -avd rex-qa -port 5554 -memory 4096 -cores 2 -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader -feature -Vulkan >"$RUNNER_TEMP/rex-emulator.log" 2>&1 &
