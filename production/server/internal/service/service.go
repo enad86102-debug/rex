@@ -320,6 +320,53 @@ func (s *Service) Logout(token string) error {
 	})
 }
 
+// SweepExpired revokes expired guest sessions and frees waiting-room seats
+// only when a player has no other live session. It makes no match decision.
+// The whole sweep is one durable transaction, including invitation rotation.
+func (s *Service) SweepExpired() (int, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	now := s.now().UTC()
+	expired := make(map[string]bool)
+	active := make(map[string]bool)
+	count := 0
+	for _, session := range s.s.Sessions {
+		if now.Before(session.ExpiresAt) {
+			active[session.PlayerID] = true
+		} else {
+			expired[session.PlayerID] = true
+			count++
+		}
+	}
+	if count == 0 {
+		return 0, nil
+	}
+	err := s.transaction(func(st *state) error {
+		for hash, session := range st.Sessions {
+			if !now.Before(session.ExpiresAt) {
+				delete(st.Sessions, hash)
+			}
+		}
+		for player := range expired {
+			st.Audit = appendAudit(st.Audit, Audit{At: now, Actor: player, Operation: "session.expired"})
+			if active[player] {
+				continue
+			}
+			if id := tableFor(st, player); id != "" {
+				if _, err := releaseWaitingSeat(st, id, player); err != nil {
+					return err
+				}
+				st.Audit = appendAudit(st.Audit, Audit{At: now, Actor: player, Operation: "table.expired_leave", TableID: id})
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func (s *Service) Table(token, id string) (Table, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()

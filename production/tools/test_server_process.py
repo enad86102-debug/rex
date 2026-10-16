@@ -3,12 +3,14 @@
 Set REX_SERVER_BINARY to an isolated build. Never points at an existing service.
 """
 import json
+import hashlib
 import os
 from pathlib import Path
 import socket
 import subprocess
 import tempfile
 import time
+from datetime import datetime, timedelta, timezone
 import unittest
 import urllib.error
 import urllib.request
@@ -113,6 +115,34 @@ class ServerProcessTest(unittest.TestCase):
             result = subprocess.run([self.binary], env=env, capture_output=True, timeout=5)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn(expected, result.stderr)
+
+    def test_expired_owner_is_released_before_restarted_server_accepts_requests(self):
+        self.start()
+        _, owner = self.request("POST", "/v1/guests", body={})
+        _, peer = self.request("POST", "/v1/guests", body={})
+        _, table = self.request("POST", "/v1/tables", owner["token"],
+                                {"action_id": "expiry-process-create-01", "game": "tarneeb"})
+        status, joined = self.request("POST", "/v1/tables/join", peer["token"],
+                                      {"action_id": "expiry-process-join-001", "invite": table["invite"]})
+        self.assertEqual(status, 200)
+        self.stop()
+        path = Path(self.env["REX_STORE"])
+        state = json.loads(path.read_text())
+        owner_hash = hashlib.sha256(owner["token"].encode()).hexdigest()
+        state["sessions"][owner_hash]["expires_at"] = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+        path.write_text(json.dumps(state))
+        self.start()
+        self.assertEqual(self.request("GET", "/v1/me", owner["token"])[0], 401)
+        status, current = self.request("GET", "/v1/tables/" + table["id"], peer["token"])
+        self.assertEqual(status, 200)
+        self.assertEqual(current["owner_id"], peer["me"]["player"]["id"])
+        self.assertIsNone(current["seats"][0])
+        self.assertNotEqual(current["invite"], joined["invite"])
+        self.assertEqual(current["version"], joined["version"] + 1)
+        self.assertNotIn(owner_hash, json.loads(path.read_text())["sessions"])
+        self.stop()
+        self.start()
+        self.assertEqual(self.request("GET", "/v1/tables/" + table["id"], peer["token"])[1], current)
 
 
 if __name__ == "__main__":
