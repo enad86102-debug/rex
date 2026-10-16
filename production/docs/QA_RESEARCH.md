@@ -58,6 +58,14 @@
 - لم يُستخدم android-emulator-runner لأنه يقبل تلقائيًا جميع تراخيصSDK
   في مصدره. workflow الخاص بنا لا ينفذ yes أو --licenses؛ يفشل إذا تطلب
   تثبيت الصورة ترخيصًا غير مقبول مسبقًا في runner.
+- اختبارات Android في حزمة مستقلة `production/qa/android_harness` تستخدم
+  كود Dart وملف Kotlin الإنتاجيين مباشرة. السبب موثق في مصدر SDK وتعليق
+  [Flutter issue56591](https://github.com/flutter/flutter/issues/56591):
+  تبعيات integration_test الأصلية قد تدخل release رغم تعريفها dev_dependency.
+  لا يضيف تطبيق الإنتاج هذه التبعية. العزل لا يجعل harness منتجًا للتوزيع.
+- [إرشادات Android الرسمية](https://developer.android.com/build/optimize-your-build#disable-jetifier)
+  تدعم تعطيل Jetifier عندما تكون التبعيات AndroidX. جرى التحقق من مصادر
+  الإضافة الأصلية، وعُطل التحويل بعد فشل CI بسبب Java heap، مع انتظار إعادة البناء.
 
 ## التشغيل
 

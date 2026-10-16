@@ -53,7 +53,7 @@ jobs:
         working-directory: production/mobile
         run: |
           flutter pub get --enforce-lockfile
-          dart format --output=none --set-exit-if-changed lib test integration_test
+          dart format --output=none --set-exit-if-changed lib test
           flutter analyze
           flutter test --reporter expanded
       - name: Real Flutter to Go room integration
@@ -102,9 +102,9 @@ jobs:
             tail -n 80 "$RUNNER_TEMP/rex-emulator.log"
             exit 1
           fi
-          cd production/mobile
+          cd production/qa/android_harness
           flutter pub get --enforce-lockfile
-          cd ../..
+          cd ../../..
           bash production/tools/check_android_device.sh
 
   legacy-regression:
