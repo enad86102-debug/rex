@@ -49,6 +49,12 @@ jobs:
       - name: Command parser fuzzing
         working-directory: production/server
         run: go test ./internal/api -run '^$' -fuzz '^FuzzCommandDecoder$' -fuzztime=5s -parallel=2
+      - name: Isolated TLS overload and recovery verification
+        working-directory: production/server
+        run: |
+          go run ./cmd/rexpressure
+          go run ./cmd/rexpressure -sources distinct
+          go run ./cmd/rexpressure -sources distinct -interval 500ms
       - name: Flutter verification
         working-directory: production/mobile
         run: |

@@ -9,8 +9,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -164,18 +166,11 @@ func digest(value string) string {
 // transaction publishes memory only after a complete snapshot has been synced
 // and atomically renamed. Never acknowledge an action after a failed write.
 func (s *Service) transaction(change func(*state) error) error {
-	data, err := json.Marshal(s.s)
-	if err != nil {
+	next := cloneState(s.s)
+	if err := change(&next); err != nil {
 		return err
 	}
-	var next state
-	if err = json.Unmarshal(data, &next); err != nil {
-		return err
-	}
-	if err = change(&next); err != nil {
-		return err
-	}
-	data, err = json.Marshal(next)
+	data, err := json.Marshal(next)
 	if err != nil {
 		return err
 	}
@@ -208,6 +203,23 @@ func (s *Service) transaction(change func(*state) error) error {
 	// A directory-sync failure leaves an ambiguous commit; action receipts still
 	// make a same-ID retry safe. The caller must not assume failed means absent.
 	return dir.Sync()
+}
+
+// Copy every mutable container, including nested seats in receipts. Transactions
+// may fail after mutation; neither memory nor replay responses may change then.
+// Persistence remains an O(state-size), single-process review adapter.
+func cloneState(st state) state {
+	next := state{Schema: st.Schema, Players: maps.Clone(st.Players),
+		Sessions: maps.Clone(st.Sessions), Tables: maps.Clone(st.Tables),
+		Receipts: maps.Clone(st.Receipts), Audit: slices.Clone(st.Audit)}
+	for id, table := range next.Tables {
+		next.Tables[id] = cloneTable(table)
+	}
+	for id, receipt := range next.Receipts {
+		receipt.Table = cloneTable(receipt.Table)
+		next.Receipts[id] = receipt
+	}
+	return next
 }
 
 func (s *Service) NewGuest() (Guest, error) {

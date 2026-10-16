@@ -28,12 +28,24 @@ type handler struct {
 	buckets      map[string]bucket
 	adminHash    [32]byte
 	adminEnabled bool
+	inflight     chan struct{}
+	nextSweep    time.Time
 }
 
-type Options struct{ AdminToken string }
+type Options struct {
+	AdminToken string
+	// Bounds application work, including slow request bodies and storage waits.
+	// Zero uses 64; values above 256 are clamped, pending measured capacity review.
+	MaxInFlight int
+}
 
 func New(s *service.Service, options ...Options) http.Handler {
 	h := &handler{s: s, buckets: make(map[string]bucket)}
+	capacity := 64
+	if len(options) > 0 && options[0].MaxInFlight > 0 {
+		capacity = min(options[0].MaxInFlight, 256)
+	}
+	h.inflight = make(chan struct{}, capacity)
 	if len(options) > 0 && len(options[0].AdminToken) >= 32 {
 		h.adminHash = sha256.Sum256([]byte(options[0].AdminToken))
 		h.adminEnabled = true
@@ -56,6 +68,18 @@ func New(s *service.Service, options ...Options) http.Handler {
 		w.Header().Set("Cache-Control", "no-store")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Referrer-Policy", "no-referrer")
+		// Health remains available during application overload. The listener and
+		// TLS proxy still need independent connection/header/body limits.
+		if r.URL.Path != "/healthz" {
+			select {
+			case h.inflight <- struct{}{}:
+				defer func() { <-h.inflight }()
+			default:
+				w.Header().Set("Retry-After", "1")
+				write(w, 503, map[string]string{"error": "server_busy"})
+				return
+			}
+		}
 		// Do not trust arbitrary X-Forwarded-For headers. Proxy rate limiting is
 		// additionally required at deployment when clients share a proxy address.
 		if !h.allow(r) {
@@ -99,15 +123,18 @@ func (h *handler) allow(r *http.Request) bool {
 	if b.Count >= limit {
 		return false
 	}
-	if len(h.buckets) >= 10000 {
+	// Sweep at most once a minute, rather than scanning 10,000 entries on
+	// every new source address during a cardinality attack.
+	if !now.Before(h.nextSweep) {
 		for key, value := range h.buckets {
 			if now.Sub(value.At) >= time.Minute {
 				delete(h.buckets, key)
 			}
 		}
-		if _, exists := h.buckets[ip]; !exists && len(h.buckets) >= 10000 {
-			return false
-		}
+		h.nextSweep = now.Add(time.Minute)
+	}
+	if _, exists := h.buckets[ip]; !exists && len(h.buckets) >= 10000 {
+		return false
 	}
 	b.Count++
 	h.buckets[ip] = b
