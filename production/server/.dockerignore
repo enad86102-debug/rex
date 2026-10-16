@@ -1,0 +1,6 @@
+data
+*.lock
+*.log
+.env*
+!*.example
+coverage*

@@ -1,0 +1,47 @@
+name: REX isolated implementation checks
+
+on:
+  push:
+    branches: ['production/**']
+  pull_request:
+    paths: ['production/**', '.github/workflows/rex-production.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.2'
+          cache: false
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.35.7'
+          cache: true
+      - name: Go verification
+        working-directory: production/server
+        run: |
+          test -z "$(gofmt -l .)"
+          go test -race -cover ./...
+          go vet ./...
+          go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+      - name: Asset intake tests
+        run: python3 -m unittest discover -s production/tools -p 'test_*.py'
+      - name: Flutter verification
+        working-directory: production/mobile
+        run: |
+          flutter pub get --enforce-lockfile
+          dart format --output=none --set-exit-if-changed lib test
+          flutter analyze
+          flutter test --reporter expanded
+      - name: Real Flutter to Go room integration
+        run: bash production/tools/check_live.sh
+      - name: Internal Android compilation only
+        working-directory: production/mobile
+        run: flutter build apk --debug --no-pub

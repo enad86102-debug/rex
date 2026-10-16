@@ -1,0 +1,90 @@
+# REX service foundation
+
+هذه حزمة عمل نحو REX V1.0 وليست خدمة الإصدار النهائي. لا محرك مباراة أو
+شراء أو نتائج أو bots. راجع [مراجعة البنية](../docs/ENGINEERING_REVIEW.md).
+
+## تحقق محلي
+
+Go 1.27.2 على Linux، لا dependencies خارج المكتبة القياسية:
+
+```sh
+go test -race -cover ./...
+go vet ./...
+go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+go build -trimpath -o rexd ./cmd/rexd
+REX_STORE=./data/state.json ./rexd
+```
+
+الافتراضي 127.0.0.1:8080. لا `X-Forwarded-For` موثوق ولا CORS مفتوح.
+لا تضع ملف البيانات أو الـlock في Git، ولا تعرّض مجلد البيانات عبر خادم ملفات.
+
+## بروتوكول v1 المنفذ
+
+JSON فقط، 4096 بايت لكل body، لا حقول إضافية، لا عدة JSON objects. bearer
+في Authorization فقط؛ الدعوات داخل body لا URL. الردود `Cache-Control:no-store`.
+
+| الطلب | السلوك |
+|---|---|
+| `GET /healthz` | حياة العملية، لا بيانات خاصة |
+| `POST /v1/guests` body `{}` | هوية ضيف وجلسة 30 يومًا؛ يحفظ الخادم بصمة token فقط |
+| `GET /v1/me` | هوية/انتهاء جلسة/طاولة اللاعب الحالي |
+| `DELETE /v1/session` | إبطال الجلسة بحفظ دائم |
+| `POST /v1/tables` | `action_id`, `game`: `trix_complex` أو `tarneeb` |
+| `POST /v1/tables/join` | `action_id`, `invite`؛ أقصى أربعة أعضاء |
+| `GET /v1/tables/{id}` | أعضاء الطاولة فقط؛ 404 لغير العضو |
+| `POST /v1/tables/{id}/ready` | `action_id`, `expected_version`, `ready` |
+| `POST /v1/tables/{id}/leave` | `action_id`, `expected_version`؛ نقل الملكية وتدوير الدعوة |
+| `POST /v1/tables/{id}/start` | المالك فقط؛ **503 rules_not_approved** |
+| `GET /v1/admin/overview` | قراءة تشغيلية، فقط عند ضبط `REX_ADMIN_TOKEN` منفصل >=32 bytes |
+
+`action_id` بين 16 و128 بايت ويجب أن يكون جديدًا لكل نية جديدة. retry لنفس
+النية يحتفظ بالمعرف وbody والمسار حرفيًا. `409 conflict` يتطلب إعادة قراءة
+الحالة قبل إنشاء نية جديدة. الرد المحفوظ قد يكون snapshot أقدم؛ اقرأ الطاولة
+بعده. لا تعتبر timeout دليلًا على أن الفعل لم ينفذ. لا exactly-once networking.
+الرمز السري للدعوة متاح لكل عضو؛ لا ترسله إلى analytics أو crash logs.
+
+## تشغيل مراجعة مستقل
+
+الخيار الأبسط: binary مع systemd خلف reverse proxy TLS على الجهاز نفسه.
+ملف `rexd.service` نموذج قابل للمراجعة؛ يقتضي مستخدم rex ومجلد binary وملف
+تهيئة خارجي root-owned. لا تنفذ تثبيتًا على بنية إنتاج دون مراجعة المسؤول.
+
+- `REX_STORE`: مسار snapshot داخل قرص محلي دائم يملكه مستخدم الخدمة.
+- `REX_LISTEN`: loopback افتراضيًا.
+- `REX_TLS_CERT` و`REX_TLS_KEY`: لتقديم TLS مباشرة من Go عند استخدامهما معًا.
+- `REX_BEHIND_TLS_PROXY=true`: مطلوب إن استمع HTTP على عنوان غير loopback؛
+  استخدمه فقط على شبكة معزولة مع proxy TLS. مجرد ضبطه لا يوفر تشفيرًا.
+- `REX_ADMIN_TOKEN`: اختياري، سر عشوائي منفصل عن جلسات اللاعبين، يُحقن من
+  مخزن أسرار. غيابه يعطّل المسار الإداري. لا توجد أي عمليات إدارة معدّلة للحالة.
+
+لا تبدأ أكثر من process على data path. flock يرفض الثاني. إيقاف SIGTERM
+ينتظر HTTP لمدة أقصاها 10s. systemd يحدد 15s قبل القتل.
+
+## الحاوية
+
+```sh
+docker build -t rex-service:foundation .
+```
+
+الصورة تعمل كمستخدم 65532 ولا تحتوي shell أو أسرار. جهز `/data` بملكية
+65532 وصلاحية0700. شغّل `--read-only --cap-drop ALL --security-opt
+no-new-privileges`، واربط `/data` فقط كتابةً. للتجربة خلف proxy TLS معزول
+اضبط `REX_BEHIND_TLS_PROXY=true` واربط المنفذ بالـloopback في المضيف.
+لا تعرض HTTP على الإنترنت. اعتماد الصورة/القرص/الـproxy والمزود لم يُحسم.
+
+لا outbound API حاليًا؛ scratch بلا CA roots مقصود. يلزم إدخال CA موثوقة
+إذا أضيفت لاحقًا اتصالات outbound. لا تعطل التحقق من الشهادات.
+
+## نسخ احتياطي واستعادة/rollback للمراجعة
+
+1. أوقف الخدمة، وتأكد خروج العملية وتحرير القفل.
+2. انسخ snapshot إلى مخزن محمي/مشفر بصلاحية0600؛ يحتوي بيانات هوية ودعوات.
+3. احفظ إصدار binary وschema=1 مع النسخة، وتحقق من hash في سجل محمي.
+4. استعد إلى مجلد منفصل، ثم شغّل الخدمة بإعداد loopback واختبر الجلسة
+   والطاولة من بيئة تحقق معزولة، ثم أوقفها.
+5. rollback: أوقف الإصدار الجديد، استعد binary والـsnapshot المتوافقين، ثم
+   ابدأ نسخة واحدة وتحقق. لا تنقل حالة اختبار أو بيانات حقيقية إلى Git.
+
+لا hot backup أو migration أو cloud restore مُثبتة بعد. تشغيل الخدمة
+مقيد بالمراجعة الداخلية حتى اعتماد قاعدة بيانات وسياسة احتفاظ ومراقبة
+وقواعد اللعبة والحسابات والأمان والإطلاق.
