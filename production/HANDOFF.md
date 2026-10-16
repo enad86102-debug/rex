@@ -2,6 +2,14 @@
 
 **REX V1.0 غير مكتمل؛ هذه دفعة هندسية فعلية للأساس، وليست تسليم لعبة نهائية.**
 
+## تحديث محرك Trix Complex المرشح
+
+المهمة 006 على `production/trix-complex-engine` فوق PR#5. اقرأ
+[تقرير التنفيذ المرشح](docs/TRIX_CANDIDATE_IMPLEMENTATION.md) و
+[العقد المسودّة](rules/trix_complex/RULES_CONTRACT_0.9.0_DRAFT.md).
+المحرك الخالص يختبر ثماني صفقات وعقود Complex وTrix، بينما التفعيل
+العام والحفظ الدائم ونقل المباراة وTarneeb والأصول والإصدار محجوبة.
+
 ## تحديث صفقة المقاعد وعقد المشهد
 
 العمل الأحدث على `production/matchcore-asset-contracts` فوق PR#4؛ اقرأ
