@@ -144,6 +144,23 @@ class ServerProcessTest(unittest.TestCase):
         self.start()
         self.assertEqual(self.request("GET", "/v1/tables/" + table["id"], peer["token"])[1], current)
 
+    def test_runtime_metrics_are_admin_only_in_real_process(self):
+        secret = "test-operator-credential-with-enough-length"
+        self.env["REX_ADMIN_TOKEN"] = secret
+        self.start()
+        self.assertEqual(self.request("GET", "/v1/admin/runtime")[0], 401)
+        status, counters = self.request("GET", "/v1/admin/runtime", secret)
+        self.assertEqual(status, 200)
+        self.assertEqual(counters["max_in_flight"], 64)
+        self.assertEqual(counters["overloaded_total"], 0)
+        self.assertNotIn(secret, json.dumps(counters))
+        self.assertEqual(self.request("POST", "/v1/guests", body={})[0], 201)
+        self.assertGreater(self.request("GET", "/v1/admin/runtime", secret)[1]["admitted_total"],
+                           counters["admitted_total"])
+        self.stop()
+        self.start()
+        self.assertEqual(self.request("GET", "/v1/admin/runtime", secret)[0], 200)
+
 
 if __name__ == "__main__":
     unittest.main()
