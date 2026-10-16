@@ -1,0 +1,33 @@
+{
+  "repository": "enad86102-debug/rex",
+  "source_commit": "f3569fefae2ee475f69faaf2b455097eba55c7a4",
+  "run_id": 38888590674,
+  "url": "https://github.com/enad86102-debug/rex/actions/runs/38888590674",
+  "jobs": [
+    {
+      "id": 116932447030,
+      "name": "android-native",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116932447198,
+      "name": "legacy-regression (app/rex_mobile)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116932447273,
+      "name": "foundation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116932447334,
+      "name": "legacy-regression (experiments/pbt08_flutter_device_spike)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "scope": "Internal verification, not release acceptance or proof of absence of vulnerabilities"
+}
