@@ -26,9 +26,11 @@ android {
         getByName("debug").res.srcDir("../../../../mobile/android/app/src/debug/res")
     }
 }
-gradle.taskGraph.whenReady {
-    require(allTasks.none { it.name.contains("Release", ignoreCase = true) || it.name.contains("Profile", ignoreCase = true) }) {
-        "REX QA harness is debug-only and must never be distributed."
+androidComponents {
+    beforeVariants(selector().all()) { variant ->
+        // Disable distribution variants directly. Debug compilation also has
+        // ART profile tasks; their names do not indicate a profile-mode build.
+        variant.enable = variant.buildType == "debug"
     }
 }
 flutter { source = "../.." }
