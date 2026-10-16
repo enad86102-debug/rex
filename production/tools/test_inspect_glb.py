@@ -8,6 +8,18 @@ from inspect_glb import inspect
 
 
 class IntakeTest(unittest.TestCase):
+    def test_non_object_and_oversized_inputs_fail_without_parser_crash(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "bad.glb"
+            payload = b"[]  "
+            path.write_bytes(struct.pack("<4sIII4s", b"glTF", 2, 24, 4, b"JSON") + payload)
+            with self.assertRaises(ValueError):
+                inspect(path)
+            with path.open("wb") as stream:
+                stream.truncate(64 * 1024 * 1024 + 1)
+            with self.assertRaises(ValueError):
+                inspect(path)
+
     def test_truncated_and_forged_headers_fail(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "bad.glb"

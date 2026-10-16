@@ -10,6 +10,8 @@ from pathlib import Path
 
 
 def inspect(path: Path) -> dict:
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > 64 * 1024 * 1024:
+        raise ValueError("expected a regular GLB no larger than 64 MiB")
     data = path.read_bytes()
     if len(data) < 20:
         raise ValueError("truncated GLB")
@@ -30,6 +32,8 @@ def inspect(path: Path) -> dict:
     if not chunks or chunks[0][0] != 0x4E4F534A:
         raise ValueError("first chunk must contain JSON")
     gltf = json.loads(chunks[0][1])
+    if not isinstance(gltf, dict):
+        raise ValueError("glTF JSON must be an object")
     if gltf.get("asset", {}).get("version") != "2.0":
         raise ValueError("unsupported glTF version")
     primitives = [p for m in gltf.get("meshes", []) for p in m.get("primitives", [])]

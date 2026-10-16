@@ -48,9 +48,22 @@ class RexController extends ChangeNotifier {
 
   Future<void> enterGuest() => _run(() async {
     final result = await api.request('POST', '/v1/guests', body: {});
-    _token = result['token'] as String;
-    await _save();
-    me = result['me'] as Map<String, dynamic>;
+    final token = result['token'] as String;
+    final identity = result['me'] as Map<String, dynamic>;
+    try {
+      await vault.write(jsonEncode({'token': token, 'pending': null}));
+    } catch (_) {
+      // Do not publish a guest that cannot survive a process restart. Revoke
+      // the newly issued session if the server is reachable; never log it.
+      try {
+        await api.request('DELETE', '/v1/session', token: token);
+      } catch (_) {
+        /* Best effort; no locally usable session is exposed. */
+      }
+      rethrow;
+    }
+    _token = token;
+    me = identity;
     initialized = true;
   });
 
@@ -74,7 +87,14 @@ class RexController extends ChangeNotifier {
       'body': {'action_id': actionId(), ...body},
     };
     // Save the action ID before transmission, including across process death.
-    await _save();
+    try {
+      await _save();
+    } catch (_) {
+      // No network mutation may outlive an action that failed to become
+      // durable. A later attempt creates a fresh intention after storage works.
+      _pending = null;
+      rethrow;
+    }
     await _replay();
     await _refresh();
   });
@@ -88,6 +108,8 @@ class RexController extends ChangeNotifier {
   Future<void> _replay() async {
     final pending = _pending;
     if (pending == null) return;
+    // Also enforce persistence on restored/retried actions, not just first send.
+    await _save();
     try {
       await api.request(
         'POST',

@@ -1,0 +1,158 @@
+{
+  "tool": "Khronos glTF Validator",
+  "version": "2.0.0-dev.3.10",
+  "results": [
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/card_single_back.glb",
+      "sha256": "c416c02530013f1e046cfef190b3b6d5b91fe6e0a7f1c8abb2cf51e30fe6b893",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/card_single_front.glb",
+      "sha256": "ee66b5bae1a359e0ad14b9c6857957de18c18512322307e107ddf65977aef66f",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/chair_royal_amethyst.glb",
+      "sha256": "0ccb29ab18b0fd92c0e62c1778292b8f8debe01e80451cf2fd29f3df2d9d894d",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/chair_royal_emerald.glb",
+      "sha256": "26c22cc6adca0757ee6c14bcc132c9da6f01577d9f196e7337d0d542d7fcc16c",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/chair_royal_ivory.glb",
+      "sha256": "0a0ccda39d4d2c21e489caecc933c95f58142af39f0b98942d5f3c3ddf8cdfa6",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/chair_royal_obsidian.glb",
+      "sha256": "c0cc0e42af84f0573ff9f81d799848c1a03f909950d8a7faf11d7bb12114bfc6",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/chair_royal_ruby.glb",
+      "sha256": "d252109b1cb6d865b881b57202c2fcaeb069ce90d2b8c7163a98ff0bf6f91857",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/chair_royal_sapphire.glb",
+      "sha256": "79d66f888b3c123874ed5354d1c568b5ceb970f5caa29a01e1546c6165638d6b",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/player_east_male_GUIDE_ONLY.glb",
+      "sha256": "82839f6ba0a71adfb30bef49eadad4f1f218a1dae8a27ec8407fba6ce3ab4dd2",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/player_north_female_GUIDE_ONLY.glb",
+      "sha256": "d7d75e97ec6029dbf18b5244e22f58d47e31a4064efd227dc2054481b4fbc0a0",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/player_south_female_GUIDE_ONLY.glb",
+      "sha256": "e3f0798b4de0543173c5b234b1f1678a606c6e48c523059785339780a5cea191",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/player_west_male_GUIDE_ONLY.glb",
+      "sha256": "cc66343ecf700cf8938ebc31bfc09e4efa871693629c168234a22f9227893b69",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/REX_four_seat_scene_GUIDE_ONLY.glb",
+      "sha256": "9dc00c424136a0b9b21ea72c4a03eb64b5a2054116804c3a1c536f0d26bdb806",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/table_royal_amethyst.glb",
+      "sha256": "13ab034dc9d7a3f0b449d878f828a176fb47a3619b2ed0327215cf6aebf9bf86",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/table_royal_emerald.glb",
+      "sha256": "51122aed7e69e0ea83a6b492affef6dadb53da9e9f21c886b29c78b177be23aa",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/table_royal_ivory.glb",
+      "sha256": "124a0b5d289d5baa5182bac90ceff1347c2eb9dcfc7bcb1256009626e2059f75",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/table_royal_obsidian.glb",
+      "sha256": "029a186ef6757f57eba6cb52f072e4ffa0c894f1c90d8f2a1e6e0c97d568e9a5",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/table_royal_ruby.glb",
+      "sha256": "41cd24721383cb7d8f42ea132355ac61564a20590ba067189dc2cabca4d12282",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    },
+    {
+      "file": "assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb/table_royal_sapphire.glb",
+      "sha256": "a33431b5655e318b38631af91132fd7b2ab64d2d0bb35a911ea36abb66643daf",
+      "errors": 0,
+      "warnings": 0,
+      "structureConformant": true,
+      "releaseApproved": false
+    }
+  ]
+}

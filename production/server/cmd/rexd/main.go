@@ -29,6 +29,7 @@ func run() error {
 		return err
 	}
 	// The snapshot adapter permits one writer process, including across restarts.
+	// #nosec G304 -- REX_STORE is trusted operator configuration, not client input.
 	lock, err := os.OpenFile(path+".lock", os.O_CREATE|os.O_RDWR, 0600)
 	if err != nil {
 		return err

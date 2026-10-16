@@ -15,6 +15,9 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-go@v5
         with:
           go-version: '1.27.2'
@@ -32,12 +35,21 @@ jobs:
           go vet ./...
           go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
       - name: Asset intake tests
-        run: python3 -m unittest discover -s production/tools -p 'test_*.py'
+        run: |
+          python3 -m unittest discover -s production/tools -p 'test_*.py'
+          npm ci --ignore-scripts --prefix production/tools/qa
+          npm test --prefix production/tools/qa
+          node production/tools/qa/validate_assets.mjs assets/staging/rex_starter_kit/REX_Asset_Starter_Kit_2026_10_10/3d/glb "$RUNNER_TEMP/rex-khronos.json"
+      - name: Independent source security checks
+        run: bash production/tools/check_security.sh
+      - name: Command parser fuzzing
+        working-directory: production/server
+        run: go test ./internal/api -run '^$' -fuzz '^FuzzCommandDecoder$' -fuzztime=5s -parallel=2
       - name: Flutter verification
         working-directory: production/mobile
         run: |
           flutter pub get --enforce-lockfile
-          dart format --output=none --set-exit-if-changed lib test
+          dart format --output=none --set-exit-if-changed lib test integration_test
           flutter analyze
           flutter test --reporter expanded
       - name: Real Flutter to Go room integration
@@ -45,3 +57,71 @@ jobs:
       - name: Internal Android compilation only
         working-directory: production/mobile
         run: flutter build apk --debug --no-pub
+
+  android-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: foundation
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.2'
+          cache: false
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.35.7'
+          cache: true
+      - name: Install emulator using preaccepted runner licenses only
+        run: |
+          # No yes, --licenses, or implicit agreement acceptance.
+          sdkmanager --install emulator 'system-images;android-36;google_apis;x86_64' </dev/null
+          test -x "$ANDROID_HOME/emulator/emulator"
+          test -d "$ANDROID_HOME/system-images/android-36/google_apis/x86_64"
+          test -e /dev/kvm
+          sudo chown "$USER" /dev/kvm
+          printf 'no\n' | avdmanager create avd --force --name rex-qa --package 'system-images;android-36;google_apis;x86_64' --device pixel_6
+      - name: Test real Android vault and real server session
+        run: |
+          "$ANDROID_HOME/emulator/emulator" -avd rex-qa -port 5554 -memory 2048 -cores 2 -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect >"$RUNNER_TEMP/rex-emulator.log" 2>&1 &
+          rex_emulator_pid=$!
+          trap 'adb -s emulator-5554 emu kill >/dev/null 2>&1 || true; kill "$rex_emulator_pid" 2>/dev/null || true' EXIT
+          timeout 180 adb -s emulator-5554 wait-for-device
+          for ((attempt=0;attempt<90;attempt++)); do
+            if [[ "$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" == 1 ]]; then break; fi
+            sleep 2
+          done
+          if [[ "$(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')" != 1 ]]; then
+            tail -n 80 "$RUNNER_TEMP/rex-emulator.log"
+            exit 1
+          fi
+          cd production/mobile
+          flutter pub get --enforce-lockfile
+          cd ../..
+          bash production/tools/check_android_device.sh
+
+  legacy-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        project: [app/rex_mobile, experiments/pbt08_flutter_device_spike]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.3'
+          cache: true
+      - name: Preserve legacy behavior with regression checks
+        working-directory: ${{ matrix.project }}
+        run: |
+          flutter pub get --enforce-lockfile
+          dart format --output=none --set-exit-if-changed lib test
+          flutter analyze
+          flutter test --reporter expanded
