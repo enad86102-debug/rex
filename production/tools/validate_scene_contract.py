@@ -38,8 +38,9 @@ def validate(data: dict) -> None:
     seats = data.get("seats", {})
     if set(seats) != SEATS:
         raise ValueError("expected four camera-relative seats")
+    inward_yaw = {"NORTH": 180, "EAST": 270, "SOUTH": 0, "WEST": 90}
     for name, item in seats.items():
-        if not _vector(item.get("position")) or item.get("inward_yaw_degrees") not in (0, 90, 180, 270):
+        if not _vector(item.get("position")) or item.get("inward_yaw_degrees") != inward_yaw[name]:
             raise ValueError("invalid seat anchor: " + name)
     if not (seats["NORTH"]["position"][2] > 0 > seats["SOUTH"]["position"][2] and
             seats["EAST"]["position"][0] > 0 > seats["WEST"]["position"][0]):

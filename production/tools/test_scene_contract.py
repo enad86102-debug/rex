@@ -18,6 +18,10 @@ class SceneContractTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate(broken)
         broken = copy.deepcopy(self.data)
+        broken["seats"]["EAST"]["inward_yaw_degrees"] = 90
+        with self.assertRaises(ValueError):
+            validate(broken)
+        broken = copy.deepcopy(self.data)
         broken["themes"][0]["release_approved"] = True
         with self.assertRaises(ValueError):
             validate(broken)
