@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: rex-checks-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   foundation:
     runs-on: ubuntu-latest
@@ -125,3 +129,11 @@ jobs:
           dart format --output=none --set-exit-if-changed lib test
           flutter analyze
           flutter test --reporter expanded
+      - name: Verify legacy release cannot use debug signing
+        working-directory: ${{ matrix.project }}
+        run: |
+          if flutter build apk --release >"$RUNNER_TEMP/rex-legacy-release.log" 2>&1; then
+            echo 'Unexpected legacy release success'
+            exit 1
+          fi
+          grep -F 'Legacy REX release builds are disabled' "$RUNNER_TEMP/rex-legacy-release.log"

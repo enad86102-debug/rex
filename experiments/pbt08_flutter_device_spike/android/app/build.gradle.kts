@@ -31,10 +31,15 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // This experiment must never produce a production-signed release.
+            signingConfig = null
         }
+    }
+}
+
+gradle.taskGraph.whenReady {
+    if (allTasks.any { it.name.contains("Release", ignoreCase = true) }) {
+        throw GradleException("Legacy REX release builds are disabled; use the reviewed production implementation.")
     }
 }
 
