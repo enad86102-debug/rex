@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'dart:convert';
 import 'package:rex_production/controller.dart';
 import 'package:rex_production/main.dart';
 import 'package:rex_production/strings.dart';
@@ -47,6 +48,55 @@ class RoomTransport extends Transport {
 }
 
 void main() {
+  testWidgets('damaged guest record is reset only after confirmation', (
+    tester,
+  ) async {
+    final vault = MemoryVault()..value = '{broken';
+    final c = RexController(Transport(), vault);
+    await tester.pumpWidget(RexApp(controller: c));
+    await tester.pumpAndSettle();
+    expect(find.text(RexStrings.resetCorruptSession), findsOneWidget);
+    expect(find.text(RexStrings.retry), findsNothing);
+    await tester.tap(find.text(RexStrings.resetCorruptSession));
+    await tester.pumpAndSettle();
+    expect(vault.value, '{broken');
+    await tester.tap(find.text(RexStrings.cancel));
+    await tester.pumpAndSettle();
+    expect(vault.value, '{broken');
+    await tester.tap(find.text(RexStrings.resetCorruptSession));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(RexStrings.resetCorruptSession).last);
+    await tester.pumpAndSettle();
+    expect(vault.value, isNull);
+    expect(find.text(RexStrings.guest), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('corrupt pending action keeps guest token after confirmation', (
+    tester,
+  ) async {
+    final vault = MemoryVault()
+      ..value = jsonEncode({
+        'token': 'saved-token',
+        'pending': {
+          'path': '/v1/guests',
+          'body': {'action_id': 'a' * 32},
+        },
+      });
+    final c = RexController(Transport(), vault);
+    await tester.pumpWidget(RexApp(controller: c));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(RexStrings.discardCorruptAction));
+    await tester.pumpAndSettle();
+    expect(jsonDecode(vault.value!)['pending'], isNotNull);
+    await tester.tap(find.text(RexStrings.discardCorruptAction).last);
+    await tester.pumpAndSettle();
+    expect(jsonDecode(vault.value!)['token'], 'saved-token');
+    expect(jsonDecode(vault.value!)['pending'], isNull);
+    expect(find.text(RexStrings.create), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   for (final size in [const Size(320, 640), const Size(640, 320)]) {
     testWidgets(
       'waiting room supports landscape, large Arabic text and tap targets $size',

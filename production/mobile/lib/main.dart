@@ -135,6 +135,40 @@ class _RexHomeState extends State<RexHome> {
     if (confirmed == true) await c.logout();
   }
 
+  Future<void> resetCorruptSession() async {
+    final preserve = c.canPreserveSession;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          preserve
+              ? RexStrings.discardCorruptAction
+              : RexStrings.resetCorruptSession,
+        ),
+        content: Text(
+          preserve
+              ? RexStrings.discardCorruptActionNotice
+              : RexStrings.resetCorruptSessionNotice,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text(RexStrings.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              preserve
+                  ? RexStrings.discardCorruptAction
+                  : RexStrings.resetCorruptSession,
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) await c.resetCorruptSession();
+  }
+
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: c,
@@ -181,13 +215,24 @@ class _RexHomeState extends State<RexHome> {
                         ),
                       ),
                     ),
-                    TextButton.icon(
-                      onPressed: c.busy
-                          ? null
-                          : () => c.initialized ? c.retry() : c.initialize(),
-                      icon: const Icon(Icons.refresh),
-                      label: const Text(RexStrings.retry),
-                    ),
+                    if (c.recoveryRequired)
+                      TextButton.icon(
+                        onPressed: c.busy ? null : resetCorruptSession,
+                        icon: const Icon(Icons.delete_outline),
+                        label: Text(
+                          c.canPreserveSession
+                              ? RexStrings.discardCorruptAction
+                              : RexStrings.resetCorruptSession,
+                        ),
+                      )
+                    else
+                      TextButton.icon(
+                        onPressed: c.busy
+                            ? null
+                            : () => c.initialized ? c.retry() : c.initialize(),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text(RexStrings.retry),
+                      ),
                   ],
                   if (c.initialized && !c.signedIn) ...[
                     Text(
