@@ -229,6 +229,40 @@ func TestLeaveOwnershipInviteAndExpiry(t *testing.T) {
 	}
 }
 
+func TestDeletedTableReceiptDoesNotRevealHistoricalInvitation(t *testing.T) {
+	s, path := setup(t)
+	owner := guest(t, s)
+	createCommand := cmd("create")
+	createCommand.Game = "tarneeb"
+	table, err := s.Act(owner.Token, "create", "", createCommand)
+	if err != nil {
+		t.Fatal(err)
+	}
+	leaveCommand := cmd("leave")
+	leaveCommand.ExpectedVersion = table.Version
+	left, err := s.Act(owner.Token, "leave", table.ID, leaveCommand)
+	if err != nil || left.Invite != "" {
+		t.Fatal("last-seat departure exposed an invitation", err)
+	}
+	if _, exists := s.s.Tables[table.ID]; exists {
+		t.Fatal("empty table survived departure")
+	}
+	if _, err := s.Act(owner.Token, "create", "", createCommand); !errors.Is(err, ErrNotFound) {
+		t.Fatal("deleted table was disclosed by a historical create receipt", err)
+	}
+	s, err = Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Act(owner.Token, "create", "", createCommand); !errors.Is(err, ErrNotFound) {
+		t.Fatal("historical invitation leaked after restart", err)
+	}
+	leftAgain, err := s.Act(owner.Token, "leave", table.ID, leaveCommand)
+	if err != nil || leftAgain.Invite != "" {
+		t.Fatal("leave retry lost its redacted idempotent result", err)
+	}
+}
+
 func TestFailedWritesDoNotAcknowledgeOrMutate(t *testing.T) {
 	s, path := setup(t)
 	g := guest(t, s)
