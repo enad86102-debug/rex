@@ -19,6 +19,26 @@ class FailingVault extends MemoryVault {
 
 void main() {
   test(
+    'failed recovery write preserves the damaged record and retry choice',
+    () async {
+      final vault = FailingVault()..value = '{broken';
+      final c = RexController(Transport(), vault);
+      addTearDown(c.dispose);
+      await c.initialize();
+      vault.failing = true;
+      await c.resetCorruptSession();
+      expect(vault.value, '{broken');
+      expect(c.recoveryRequired, isTrue);
+      expect(c.initialized, isFalse);
+      expect(c.error, 'secure_storage_or_response_failed');
+      vault.failing = false;
+      await c.resetCorruptSession();
+      expect(vault.value, isNull);
+      expect(c.initialized, isTrue);
+    },
+  );
+
+  test(
     'failed guest persistence never publishes a half-initialized identity',
     () async {
       final transport = Transport();

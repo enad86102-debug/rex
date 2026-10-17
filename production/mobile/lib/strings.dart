@@ -16,6 +16,12 @@ abstract final class RexStrings {
       'تسجيل الخروج يُنهي جلسة الضيف. لن تتمكن من استعادة هذه الهوية حاليًا. هل تريد المتابعة؟';
   static const cancel = 'إلغاء';
   static const retry = 'إعادة المحاولة';
+  static const resetCorruptSession = 'مسح بيانات الدخول التالفة';
+  static const resetCorruptSessionNotice =
+      'تعذّر قراءة جلسة الضيف المحفوظة. مسحها قد يفقد هذه الهوية والطاولة على هذا الجهاز، ولا تتوفر استعادة الحساب حاليًا. هل تريد المتابعة؟';
+  static const discardCorruptAction = 'استعادة الجلسة دون الطلب التالف';
+  static const discardCorruptActionNotice =
+      'رمز الضيف محفوظ، لكن الطلب المعلّق تالف ولا يمكن إعادته بأمان. قد يكون الطلب نُفذ على الخادم؛ سنحفظ الجلسة ونقرأ حالتها الحالية بعد حذف الطلب التالف. هل تريد المتابعة؟';
   static const ready = 'أنا جاهز';
   static const notReady = 'إلغاء الجاهزية';
   static const waiting = 'بانتظار لاعب';
@@ -38,6 +44,10 @@ abstract final class RexStrings {
     'rules_not_approved' => 'اللعب غير متاح حاليًا.',
     'secure_storage_or_response_failed' =>
       'تعذّر حفظ الجلسة أو قراءة البيانات بأمان. أعد المحاولة.',
+    'invalid_local_session' =>
+      'بيانات الدخول المحفوظة تالفة. يمكنك مسحها بعد مراجعة التنبيه.',
+    'invalid_local_action' =>
+      'الطلب المحفوظ تالف. يمكنك الاحتفاظ بجلسة الضيف وحذف الطلب بعد مراجعة التنبيه.',
     _ => 'تعذّر الاتصال بالخدمة. تحقّق من الشبكة وأعد المحاولة.',
   };
 }

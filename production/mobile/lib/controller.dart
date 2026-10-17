@@ -11,11 +11,13 @@ class RexController extends ChangeNotifier {
   final RexTransport api;
   final SessionVault vault;
   String? _token;
+  String? _recoverableToken;
   Map<String, dynamic>? me;
   Map<String, dynamic>? table;
   Map<String, dynamic>? _pending;
   bool busy = false;
   bool initialized = false;
+  bool recoveryRequired = false;
   bool _refreshing = false;
   bool _active = true;
   bool _disposed = false;
@@ -23,14 +25,56 @@ class RexController extends ChangeNotifier {
   Timer? _poll;
   bool get signedIn => _token != null;
   bool get hasPendingAction => _pending != null;
+  bool get canPreserveSession => recoveryRequired && _recoverableToken != null;
+
+  bool _validPending(Object? value) {
+    if (value is! Map<String, dynamic>) return false;
+    final path = value['path'];
+    final body = value['body'];
+    if (path is! String || body is! Map<String, dynamic>) return false;
+    final id = body['action_id'];
+    if (id is! String || !RegExp(r'^[0-9a-f]{32}$').hasMatch(id)) {
+      return false;
+    }
+    return path == '/v1/tables' ||
+        path == '/v1/tables/join' ||
+        RegExp(r'^/v1/tables/[0-9a-f]{32}/(ready|leave)$').hasMatch(path);
+  }
 
   Future<void> initialize() async {
     if (initialized || busy) return;
     await _run(() async {
       final saved = await vault.read();
       if (saved != null) {
-        final value = jsonDecode(saved) as Map<String, dynamic>;
-        _token = value['token'] as String?;
+        Map<String, dynamic> value;
+        String? recoverableToken;
+        try {
+          final decoded = jsonDecode(saved);
+          if (decoded is! Map<String, dynamic>) {
+            throw const FormatException('invalid saved session');
+          }
+          final token = decoded['token'];
+          if (token is! String || token.isEmpty) {
+            throw const FormatException('invalid saved token');
+          }
+          recoverableToken = token;
+          if (decoded['pending'] != null &&
+              !_validPending(decoded['pending'])) {
+            throw const FormatException('invalid pending action');
+          }
+          value = decoded;
+        } on FormatException {
+          // Preserve the unreadable record until the player explicitly agrees
+          // to reset it. Keep a valid token even if only its pending action is
+          // damaged; losing the sole guest identity is avoidable in that case.
+          _recoverableToken = recoverableToken;
+          recoveryRequired = true;
+          error = recoverableToken == null
+              ? 'invalid_local_session'
+              : 'invalid_local_action';
+          return;
+        }
+        _token = value['token'] as String;
         _pending = value['pending'] as Map<String, dynamic>?;
         if (_token != null) {
           await _replay();
@@ -41,6 +85,22 @@ class RexController extends ChangeNotifier {
     });
     _poll ??= Timer.periodic(const Duration(seconds: 2), (_) => refresh());
   }
+
+  Future<void> resetCorruptSession() => _run(() async {
+    if (!recoveryRequired) return;
+    final token = _recoverableToken;
+    await vault.write(
+      token == null ? null : jsonEncode({'token': token, 'pending': null}),
+    );
+    _token = token;
+    _recoverableToken = null;
+    _pending = null;
+    me = null;
+    table = null;
+    recoveryRequired = false;
+    initialized = true;
+    if (token != null) await _refresh();
+  });
 
   Future<void> _save() => vault.write(
     _token == null ? null : jsonEncode({'token': _token, 'pending': _pending}),

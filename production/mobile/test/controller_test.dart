@@ -14,6 +14,11 @@ class MemoryVault implements SessionVault {
   Future<void> write(String? value) async => this.value = value;
 }
 
+class ReadFailingVault extends MemoryVault {
+  @override
+  Future<String?> read() async => throw StateError('keystore unavailable');
+}
+
 class Transport implements RexTransport {
   final calls = <Map<String, dynamic>>[];
   bool loseResponse = false;
@@ -56,6 +61,43 @@ class Transport implements RexTransport {
 }
 
 void main() {
+  test(
+    'corrupt saved session requires explicit reset and then permits entry',
+    () async {
+      for (final damaged in ['{broken', '[]', '{"token":null}']) {
+        final vault = MemoryVault()..value = damaged;
+        final c = RexController(Transport(), vault);
+        await c.initialize();
+        expect(c.recoveryRequired, isTrue);
+        expect(c.initialized, isFalse);
+        expect(c.error, 'invalid_local_session');
+        expect(vault.value, damaged);
+        await c.resetCorruptSession();
+        expect(vault.value, isNull);
+        expect(c.recoveryRequired, isFalse);
+        expect(c.initialized, isTrue);
+        await c.enterGuest();
+        expect(c.signedIn, isTrue);
+        c.dispose();
+      }
+    },
+  );
+
+  test(
+    'temporary secure-store read failure never offers destructive reset',
+    () async {
+      final vault = ReadFailingVault()
+        ..value = '{"token":"saved","pending":null}';
+      final c = RexController(Transport(), vault);
+      addTearDown(c.dispose);
+      await c.initialize();
+      expect(c.recoveryRequired, isFalse);
+      expect(c.error, 'secure_storage_or_response_failed');
+      await c.resetCorruptSession();
+      expect(vault.value, isNotNull);
+    },
+  );
+
   test(
     'ambiguous command survives process death with original action ID',
     () async {
@@ -138,5 +180,37 @@ void main() {
     }
     final api = RexApi('https://example.com');
     api.close();
+  });
+
+  test('valid guest token survives corrupt or unsafe pending action', () async {
+    for (final pending in [
+      {'path': 5, 'body': <String, dynamic>{}},
+      {
+        'path': '/v1/guests',
+        'body': {'action_id': 'a' * 32},
+      },
+      {
+        'path': '/v1/tables',
+        'body': {'action_id': 'not-an-action-id'},
+      },
+    ]) {
+      final saved = jsonEncode({'token': 'saved-token', 'pending': pending});
+      final vault = MemoryVault()..value = saved;
+      final transport = Transport();
+      final c = RexController(transport, vault);
+      await c.initialize();
+      expect(c.recoveryRequired, isTrue);
+      expect(c.canPreserveSession, isTrue);
+      expect(c.error, 'invalid_local_action');
+      expect(vault.value, saved);
+      expect(transport.calls, isEmpty);
+      await c.resetCorruptSession();
+      expect(c.signedIn, isTrue);
+      expect(c.error, isNull);
+      expect(jsonDecode(vault.value!)['token'], 'saved-token');
+      expect(jsonDecode(vault.value!)['pending'], isNull);
+      expect(transport.calls.map((call) => call['path']), ['/v1/me']);
+      c.dispose();
+    }
   });
 }
