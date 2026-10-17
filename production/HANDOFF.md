@@ -1,5 +1,17 @@
 # تسليم استكمال REX — 2026-10-16
 
+## تحديث 17 أكتوبر 2026: تثبيت التطبيق الجديد على Android
+
+الفرع `production/android-app-install-smoke` فوق PR#9، ومسودة
+[PR#10](https://github.com/enad86102-debug/rex/pull/10). نجح
+[تشغيل CI 39009040175](https://github.com/enad86102-debug/rex/actions/runs/39009040175)
+للـcommit `20c7342`: أربعة jobs ناجحة؛ APK debug لتطبيق `production/mobile`
+نفسه ثُبّت على محاكي API36، ورُسمت شاشة الدخول، ودخل ضيف وأنشأ طاولة
+خادمية عبر واجهة Android. لقطات الشاشة وAPK الداخلي محفوظة كـartifact
+لمدة 7 أيام. تبدو واجهة الغرفة مقروءة لكنها بسيطة، ولا تطابق مشهد REX
+الملكي المرجعي؛ لا أوراق أو شخصيات أو لعبة عامة. `start` يرد
+`rules_not_approved`. لا جهاز Android فعلي أو AAB release أو اعتماد أصول.
+
 ## تحديث 17 أكتوبر 2026: تدقيق المشروع الكامل وإصلاح الإيصالات
 
 الفرع `production/full-audit-receipt-fix` متراكم فوق PR#8. اقرأ
