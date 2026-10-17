@@ -415,9 +415,15 @@ func (s *Service) Act(token, operation, id string, c Command) (Table, error) {
 		if receipt.Fingerprint != fingerprint {
 			return Table{}, ErrConflict
 		}
-		// A departed player must never regain access to an invitation through replay.
-		if t, exists := s.s.Tables[receipt.Table.ID]; exists && member(t, player) < 0 && operation != "leave" {
-			return Table{}, ErrNotFound
+		// A departed player must never regain a historical invitation or
+		// table roster through replay, including after the last seat leaves
+		// and the table has been deleted. Leave receipts intentionally omit
+		// the invitation and remain safe to return.
+		if operation != "leave" {
+			t, exists := s.s.Tables[receipt.Table.ID]
+			if !exists || member(t, player) < 0 {
+				return Table{}, ErrNotFound
+			}
 		}
 		return cloneTable(receipt.Table), nil
 	}
