@@ -129,6 +129,65 @@ func TestRandomizedDealsAlwaysSettleWithoutLosingCards(t *testing.T) {
 	}
 }
 
+func TestReceiptIdentityCannotCollideAcrossActors(t *testing.T) {
+	members := [4]string{"owner", "east", "south", "owner:segment"}
+	m, err := NewCandidateMatch("receipt-boundary-test", testProfile(), members, cards.Deck())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if m.owner != 3 {
+		t.Fatal("test deck no longer assigns owner to seat three")
+	}
+	choose := candidateAction(m, m.owner, ChooseContract, 1)
+	choose.ActionID = "action-0000000001"
+	choose.Contract = Complex
+	if _, err := m.Apply(choose); err != nil {
+		t.Fatal(err)
+	}
+	lead := candidateAction(m, m.turn, PlayCard, 2)
+	lead.Card = m.hands[m.turn][0]
+	if _, err := m.Apply(lead); err != nil {
+		t.Fatal(err)
+	}
+	if m.turn != 0 {
+		t.Fatal("test seat order changed")
+	}
+	follow := candidateAction(m, m.turn, PlayCard, 3)
+	follow.ActionID = "segment:action-0000000001"
+	for _, card := range m.hands[m.turn] {
+		if complexLegal(m.hands[m.turn], m.trick, card) {
+			follow.Card = card
+			break
+		}
+	}
+	if _, err := m.Apply(follow); err != nil {
+		t.Fatalf("distinct actor/action pair collided with another receipt: %v", err)
+	}
+	if len(m.receipts) != 3 || m.VerifyReplay() != nil {
+		t.Fatal("receipts or replay differ after distinct identities")
+	}
+	if _, err := m.Apply(follow); err != nil {
+		t.Fatal("exact retry lost its idempotent receipt", err)
+	}
+}
+
+func TestVerifyReplayDetectsPrivateStateOrJournalCorruption(t *testing.T) {
+	m := newTestMatch(t)
+	chooseTest(t, m, Complex, 1)
+	if err := m.VerifyReplay(); err != nil {
+		t.Fatal(err)
+	}
+	m.scores[0]++
+	if err := m.VerifyReplay(); !errors.Is(err, ErrInvalidState) {
+		t.Fatal("corrupted score was not detected")
+	}
+	m.scores[0]--
+	m.journal[0].action.ExpectedVersion++
+	if err := m.VerifyReplay(); !errors.Is(err, ErrInvalidState) {
+		t.Fatal("corrupted journal was not detected")
+	}
+}
+
 func FuzzTrickWinnerAndPenalty(f *testing.F) {
 	f.Add([]byte{0, 1, 2, 3})
 	f.Add([]byte{51, 13, 26, 39})

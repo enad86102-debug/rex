@@ -3,6 +3,7 @@ package trixcomplex
 import (
 	"crypto/sha256"
 	"encoding/json"
+	"reflect"
 	"slices"
 
 	"rex/production/server/internal/cards"
@@ -12,6 +13,13 @@ import (
 type receipt struct {
 	fingerprint [32]byte
 	result      ActionResult
+}
+
+// A structured key keeps actor and action boundaries unambiguous even when
+// either identifier contains punctuation used by the transport layer.
+type receiptKey struct {
+	actorID  string
+	actionID string
 }
 
 type journalEntry struct {
@@ -28,7 +36,7 @@ type Match struct {
 	members        [4]string
 	initialDeck    []cards.Card
 	journal        []journalEntry
-	receipts       map[string]receipt
+	receipts       map[receiptKey]receipt
 	version        uint64
 	kingdom        Kingdom
 	owner          SeatID
@@ -64,7 +72,7 @@ func NewCandidateMatch(id MatchID, profile CandidateProfile, members [4]string, 
 		return nil, err
 	}
 	m := &Match{id: id, profile: profile, members: members,
-		initialDeck: slices.Clone(firstDeck), receipts: make(map[string]receipt),
+		initialDeck: slices.Clone(firstDeck), receipts: make(map[receiptKey]receipt),
 		version: 1, phase: ContractSelection}
 	for seat := range m.hands {
 		m.hands[seat], _ = deal.HandCopy(seat)
@@ -140,9 +148,12 @@ func (m *Match) Apply(action GameAction) (ActionResult, error) {
 		(action.ClaimedSeat != nil && *action.ClaimedSeat != seat) {
 		return ActionResult{}, ErrInvalidAction
 	}
-	encoded, _ := json.Marshal(action)
+	encoded, err := json.Marshal(action)
+	if err != nil {
+		return ActionResult{}, ErrInvalidAction
+	}
 	fingerprint := sha256.Sum256(encoded)
-	key := action.ActorID + ":" + action.ActionID
+	key := receiptKey{actorID: action.ActorID, actionID: action.ActionID}
 	if old, found := m.receipts[key]; found {
 		if old.fingerprint != fingerprint {
 			return ActionResult{}, ErrActionConflict
@@ -409,6 +420,17 @@ func (m *Match) Replay() (*Match, error) {
 		}
 	}
 	return replayed, nil
+}
+
+// VerifyReplay checks that the current private in-memory state matches a fresh
+// deterministic execution of its journal. The journal is not durable or
+// tamper-evident; persistence and signed audit records need separate review.
+func (m *Match) VerifyReplay() error {
+	replayed, err := m.Replay()
+	if err != nil || !reflect.DeepEqual(m, replayed) {
+		return ErrInvalidState
+	}
+	return nil
 }
 
 func (m *Match) PublicEvents() []GameEvent {
