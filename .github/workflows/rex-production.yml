@@ -129,6 +129,20 @@ jobs:
           flutter pub get --enforce-lockfile
           cd ../../..
           bash production/tools/check_android_device.sh
+          cd production/mobile
+          flutter pub get --enforce-lockfile
+          flutter build apk --debug --no-pub
+          cd ../..
+          REX_ANDROID_SCREENSHOT="$RUNNER_TEMP/rex-home.png" bash production/tools/check_android_app.sh
+      - name: Preserve internal Android install evidence
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: rex-internal-android-smoke
+          path: |
+            production/mobile/build/app/outputs/flutter-apk/app-debug.apk
+            ${{ runner.temp }}/rex-home.png
+          retention-days: 7
 
   legacy-regression:
     runs-on: ubuntu-latest
