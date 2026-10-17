@@ -67,6 +67,13 @@ func run() error {
 		slog.Info("expired sessions recovered", "count", count)
 	}
 	server := &http.Server{Addr: address, Handler: api.New(s, api.Options{AdminToken: adminToken}), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 8192}
+	listener, err := net.Listen("tcp", address)
+	if err != nil {
+		return err
+	}
+	// Single-process review capacity, not a production concurrency claim.
+	limited := newLimitListener(listener, 512)
+	defer limited.Close()
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	go func() {
@@ -89,9 +96,9 @@ func run() error {
 	done := make(chan error, 1)
 	go func() {
 		if cert != "" {
-			done <- server.ListenAndServeTLS(cert, key)
+			done <- server.ServeTLS(limited, cert, key)
 		} else {
-			done <- server.ListenAndServe()
+			done <- server.Serve(limited)
 		}
 	}()
 	slog.Info("REX service listening", "address", address, "rules_enabled", false)
