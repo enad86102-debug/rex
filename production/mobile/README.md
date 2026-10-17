@@ -27,11 +27,18 @@ flutter run --dart-define=REX_API_URL=https://YOUR-REVIEW-SERVER
 flutter build apk --debug
 ```
 
-**نجح debug APK في [GitHub CI](https://github.com/enad86102-debug/rex/actions/runs/38875799795)
-للـcommit c6959ec**. ليس AAB أو إصدارًا نهائيًا، ولا اختبار جهاز فعلي.
-محليًا لم تنتج البيئة APK: نُزّلت cmdline tools، لكن حزم API36 وأدوات
-البناء متوقفة عند ترخيص Android SDK الذي لم يُقبل نيابة عن الجهة. سؤال
-التفويض أُرسل للمستخدم. بعد قبول مسؤول مخوّل:
+**نجح بناء debug APK في CI**، وآخر [تشغيل ناجح قبل فحص التثبيت الجديد](https://github.com/enad86102-debug/rex/actions/runs/39006048895)
+للـcommit ea43e80. هذا ليس AAB أو إصدارًا نهائيًا. وظيفة Android الأصلية
+اختبرت Keystore والجلسة على محاكي API36 داخل تطبيق QA منفصل؛ لم تكن تثبّت
+تطبيق `production/mobile` نفسه. [تشغيل CI 39009040175](https://github.com/enad86102-debug/rex/actions/runs/39009040175)
+للـcommit `20c7342` ثبّت التطبيق الجديد على محاكي API36، فتح الشاشة العربية،
+دخل كضيف وأنشأ طاولة حقيقية بالخادم عبر الأزرار. حفظ APK debug ولقطتي
+البداية والغرفة داخليًا لمدة 7 أيام. الفحص في `tools/check_android_app.sh`؛
+هذا لا يثبت مباراة أو رسومًا ثلاثية الأبعاد أو أداء جهاز فعلي.
+
+ثُبّت Flutter 3.35.7 محليًا لهذه الجولة وشُغلت اختبارات الواجهة، لكن بيئة
+العمل لا تحتوي Android SDK أو ADB أو جهازًا موصولًا. لتكرار بناء Android
+على جهاز مزود بأدوات مرخصة ومثبتة:
 
 ```sh
 sdkmanager 'platforms;android-36' 'build-tools;36.0.0' 'platform-tools'
@@ -40,9 +47,10 @@ flutter build apk --debug
 ```
 
 قد يحتاج Gradle حزمة NDK التي يحددها Flutter؛ أي اتفاقيات إضافية يراجعها
-مخوّل. CI أثبت compile لكود Kotlin/Android الحالي، ولا يثبت سلوك Keystore
-على جهاز/محاكي أو release build. NDK المستخدم فيCI هو27.0.12077973
-وCMake3.22.1. راجع HANDOFF للفرق بين دليل البناء وقياسات الأداء الغائبة.
+مخوّل. فحوص CI الحالية أثبتت Keystore والجلسة على محاكي، ويضيف الفرع
+الحالي فحص تثبيت التطبيق الجديد نفسه. لا يثبت ذلك سلوك جهاز فعلي أو
+release build أو أداء اللعب. راجع HANDOFF للفرق بين دليل البناء وقياسات
+الأداء الغائبة.
 
 ## تكامل حقيقي قابل للإعادة
 
