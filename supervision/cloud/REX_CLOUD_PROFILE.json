@@ -1,0 +1,71 @@
+{
+  "schema": "rex.cloud.profile.v1",
+  "version": "2026-10-18",
+  "profile_type": "codex-cloud-configuration-blueprint-not-platform-native",
+  "basis": {
+    "production_branch": "production/swarm-reviewed-recovery",
+    "toolkit_branch": "supervision/rex-swarm-control",
+    "go_version": "1.27.2",
+    "flutter_version": "3.35.7",
+    "legacy_flutter": "3.47.3",
+    "jdk_major": 17,
+    "android_compile_sdk": 36,
+    "android_target_sdk": 36
+  },
+  "tools": {
+    "required_core": [
+      "git",
+      "go",
+      "python3",
+      "curl"
+    ],
+    "required_android": [
+      "flutter",
+      "dart",
+      "java",
+      "adb",
+      "sdkmanager"
+    ],
+    "optional_art": [
+      "blender",
+      "node",
+      "npm"
+    ],
+    "optional_security": [
+      "gosec",
+      "staticcheck",
+      "govulncheck",
+      "gitleaks"
+    ]
+  },
+  "network": {
+    "policy": "prefer-restricted-domain-allowlist-when-supported",
+    "setup_domains": [
+      "go.dev",
+      "dl.google.com",
+      "github.com",
+      "api.github.com",
+      "storage.googleapis.com",
+      "pub.dev",
+      "services.gradle.org",
+      "repo.maven.apache.org",
+      "maven.google.com",
+      "objects.githubusercontent.com",
+      "github-releases.githubusercontent.com"
+    ],
+    "notes": "Exact allowed hosts must be validated against observed redirects; no wildcard, no unrestricted internet by default. No assumption Codex UI accepts these names or automatically applies this file."
+  },
+  "resources": {
+    "default": "use available standard cloud tier",
+    "recommended_if_offered": "4 vCPU / 16 GiB for Android + Flutter build, and CI runner emulator for device tests",
+    "limitations": "consumer Codex Cloud UI may expose different sizes; memory and compute are not automatically provisioned by this file"
+  },
+  "credentials": {
+    "repository": "connected GitHub identity with branch-scoped code write and PR access",
+    "secrets": "external manager only, none required for unit tests",
+    "release_signing": "HUMAN_ONLY_NEVER_IN_GENERAL_CODEX_ENV",
+    "billing": "HUMAN_ONLY",
+    "production_host": "NO_DIRECT_WRITE_BY_DEFAULT"
+  },
+  "design": "Setup program is opt-in. This JSON does not itself grant access, install tools, or publish a Codex environment."
+}
