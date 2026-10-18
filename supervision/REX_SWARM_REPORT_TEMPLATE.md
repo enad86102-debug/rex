@@ -41,3 +41,12 @@ Production readiness by criterion; the exact current code and build/install comm
 - Registry: 1000 defined/25 domains/NOT_RUN initially. State exact relevant audit IDs selected by router and how many were actually verified with evidence.
 - Count not run, blocked, reviewed/pass independently; never conflate registration, assignment and completion.
 - Internet skills: which trusted reference links were consulted, which original in-repo skill ran, and whether any external script was actually installed/executed.
+
+## Codex Cloud environment & access readiness
+- Published environment confirmed? Which repository and actual branch was selected?
+- Go, Flutter, JDK, Android SDK and KVM emulator capability evidence:
+- Last cloud doctor and cloud policy CI status/links:
+- GitHub code/PR/Actions access actually exercised, or missing operator permission:
+- Network hosts actually allowed/tested and dependency lockfile status:
+- External credentials used? Never include values, only purpose/least privilege/expiration:
+- Art tools availability versus real licensed production asset output:

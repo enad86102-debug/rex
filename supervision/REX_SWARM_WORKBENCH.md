@@ -18,6 +18,14 @@
 
 Three active implementation tasks maximum, up to four reviewers concurrently if genuinely supported; code owner writes, reviewers inspect independently. Never have multiple agents editing the same files simultaneously.
 
+## Cloud environment foundation
+- Platform setup and operator permissions: `supervision/cloud/CLOUD_ACCESS_AND_SETUP.md` and `REX_ACCESS_MATRIX.json`.
+- Actual production CI toolchain: Go 1.27.2; Flutter 3.35.7; Java 17; Android SDK 36. Legacy Flutter version is separate.
+- Opt-in tool installer: `bash supervision/cloud/setup_rex_cloud.sh --profile android --check`; no sudo, no license autoaccept, no secrets.
+- Doctor: `python3 supervision/cloud/cloud_doctor.py --profile android --json`.
+- Cloud setup tests: `python3 -m unittest discover -s supervision/cloud -p 'test_*.py' -v` and dedicated GitHub Actions check.
+- Cloud tool access cannot be conferred via Git; human must connect repo, configure network/credentials and publish a reusable environment.
+
 ## Tooling
 - Skills: `.agents/skills/<name>/SKILL.md` (34 focused workflows).
 - Thousand-audit register: `supervision/SWARM_AUDITS_1000.json` (25 domains × 40 probes, all initially NOT_RUN). Select with `python3 supervision/tools/audit_router.py --paths <changed-file> --limit 12`.

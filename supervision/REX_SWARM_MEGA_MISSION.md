@@ -3,6 +3,9 @@
 ## Purpose
 Deliver the maximum feasible amount of **real working code** toward a full, verified Android REX V1.0, not a shell demo or thousand-page report. Keep the work honest and resumable across cloud tasks. The supervisor toolkit is a decision/routing layer and does not run automatically.
 
+## Mandatory Cloud environment preflight (before development task)
+The Codex Cloud environment must be configured by an authorized user and prepared before production work. See `supervision/cloud/CLOUD_ACCESS_AND_SETUP.md`, `REX_CLOUD_PROFILE.json`, `REX_ACCESS_MATRIX.json` and `CODEX_CLOUD_PREFLIGHT_PROMPT.md`. Inventory Go 1.27.2, Flutter 3.35.7, Java 17 and Android SDK 36; use `setup_rex_cloud.sh --profile android --check` and `cloud_doctor.py`. Enable narrowly scoped GitHub repository/PR/Actions access and official dependency-host network access through the actual Codex environment UI. Do not insert credentials into files or claim this blueprint automatically grants permissions. Preserve release signing and production access for human operators. Cloud runtime and full product readiness are distinct statuses.
+
 ## Source of truth
 - Inspect actual PR heads and CI first.
 - Swarm instructions: `supervision/REX_SWARM_CHARTER.md`, `REX_SWARM_WORKBENCH.md`.

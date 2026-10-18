@@ -8,3 +8,5 @@ Codex may build reversible D0/D1 patches; D2 changes require Abdulaziz technical
 Do not abandon the real Go/Flutter production project for a newly bootstrapped demo. Report current code and real tests, not simply enormous essays.
 
 When coding a PR, use `$rex-thousand-audit-dispatch` to select only relevant review assignments from `SWARM_AUDITS_1000.json`; all 1000 remain NOT_RUN until actual evidence. Use `$rex-external-skill-guard` and source registry before importing any internet skill. No 1000-agent spawn; keep reviewer concurrency bounded.
+
+Before a Codex Cloud task, read `cloud/CLOUD_ACCESS_AND_SETUP.md`, run cloud doctor, and request exact missing GitHub/network/sdk access through operator actions. No skill may expand its own privileges, accept paid terms or grant release-signing authority. Run the Cloud preflight as a separate task when environment is not ready.
