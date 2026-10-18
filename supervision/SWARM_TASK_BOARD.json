@@ -1,0 +1,97 @@
+{
+  "schema": "rex.swarm.taskboard.v1",
+  "as_of": "2026-10-18",
+  "wip_limit": 3,
+  "disclaimer": "Planning only: entries do not mean agents are running; recheck latest PR/CI before editing.",
+  "branch_hint": "production/swarm-reviewed-recovery",
+  "tasks": [
+    {
+      "id": "SW-P0-001",
+      "title": "Final Trix rules approval decision package",
+      "class": "D3",
+      "status": "blocked_human",
+      "owner": "rex-trix-acceptance",
+      "exit": "Versioned approved rules with edge fixtures and signatures"
+    },
+    {
+      "id": "SW-P0-002",
+      "title": "Atomic match storage and protocol technical review",
+      "class": "D2",
+      "status": "needs_technical_review",
+      "owner": "rex-atomic-persistence",
+      "exit": "Validated transaction+event+receipt design and Abdulaziz review"
+    },
+    {
+      "id": "SW-P0-003",
+      "title": "Trix authenticated server match seams behind gate",
+      "class": "D1",
+      "status": "ready_for_safe_code",
+      "owner": "rex-go-engine",
+      "exit": "Scoped integration patches with authorization, tests, disabled public start"
+    },
+    {
+      "id": "SW-P0-004",
+      "title": "Real-time per-seat match transport and recovery",
+      "class": "D2",
+      "status": "needs_technical_review",
+      "owner": "rex-realtime-transport",
+      "exit": "Ack/replay/resume design, negative privacy and recovery tests"
+    },
+    {
+      "id": "SW-P0-005",
+      "title": "Flutter real match view and card controls",
+      "class": "D1",
+      "status": "blocked_dependency",
+      "owner": "rex-flutter-android",
+      "exit": "Actual server hand/turn/score and lifecycle tests"
+    },
+    {
+      "id": "SW-P0-006",
+      "title": "Four independent real-client match E2E",
+      "class": "D1",
+      "status": "blocked_dependency",
+      "owner": "rex-ci-qa",
+      "exit": "Eight Trix deals complete, tamper/restart/reconnect/settlement verified"
+    },
+    {
+      "id": "SW-P0-007",
+      "title": "Professional royal source art + renderer review",
+      "class": "D2",
+      "status": "needs_art_and_technical_review",
+      "owner": "rex-cinematic-assets",
+      "exit": "Source/rights/GLB/rig/animation/mobile budget and human visual review"
+    },
+    {
+      "id": "SW-P0-008",
+      "title": "Tarneeb independent rules and engine",
+      "class": "D3",
+      "status": "blocked_human",
+      "owner": "rex-tarneeb-contract",
+      "exit": "Approved bidding/tricks/scoring and four-client real match"
+    },
+    {
+      "id": "SW-P1-009",
+      "title": "PR1-14 dependency and quality audit",
+      "class": "D1",
+      "status": "ready_for_review",
+      "owner": "rex-pr-stack-review",
+      "exit": "Bottom-up status/evidence; human-approved merge plan"
+    },
+    {
+      "id": "SW-P1-010",
+      "title": "Accounts, moderation, backups and release",
+      "class": "D3",
+      "status": "blocked_dependency",
+      "owner": "rex-release-supervisor",
+      "exit": "Operations, real devices, privacy, signed AAB and final review"
+    },
+    {
+      "id": "SW-P1-011",
+      "title": "Deterministic source/CI quick wins",
+      "class": "D0",
+      "status": "ready_for_safe_code",
+      "owner": "rex-ci-qa",
+      "exit": "Minimal tested regression fix without extra scope"
+    }
+  ]
+}
