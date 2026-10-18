@@ -30,7 +30,8 @@ class DoctorTests(unittest.TestCase):
     def test_android_sdk_36_is_required_for_android_ready(self, fake):
         fake.side_effect = lambda name: {"present": True, "version": "go1.27.2" if name == "go" else "3.35.7" if name == "flutter" else "v"}
         with tempfile.TemporaryDirectory() as tmp:
-            report = doctor.inspect(Path(tmp), "android")
+            with patch.dict(doctor.os.environ, {"ANDROID_HOME": str(Path(tmp) / "missing"), "ANDROID_SDK_ROOT": str(Path(tmp) / "missing")}):
+                report = doctor.inspect(Path(tmp), "android")
             self.assertEqual(report["verdict"], "MISSING_PREREQUISITES")
             self.assertFalse(report["android_sdk_36_present"])
 
