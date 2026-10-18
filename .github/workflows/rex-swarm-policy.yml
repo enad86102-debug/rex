@@ -1,0 +1,28 @@
+name: REX Swarm policy checks
+on:
+  pull_request:
+    paths:
+      - '.agents/skills/**'
+      - 'supervision/**'
+      - '.github/workflows/rex-swarm-policy.yml'
+  push:
+    branches:
+      - 'supervision/**'
+    paths:
+      - '.agents/skills/**'
+      - 'supervision/**'
+      - '.github/workflows/rex-swarm-policy.yml'
+permissions:
+  contents: read
+jobs:
+  swarm-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate supervised skill manifests and task board
+        run: python3 supervision/tools/swarm_check.py --root .
+      - name: Run policy validator regression tests
+        run: python3 -m unittest discover -s supervision/tools -p 'test_*.py' -v
+      - name: Verify launcher syntax
+        run: bash -n supervision/tools/run_checks.sh
