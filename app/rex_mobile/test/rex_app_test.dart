@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rex_mobile/features_table_scene.dart';
 import 'package:rex_mobile/main.dart';
 
 void main() {
