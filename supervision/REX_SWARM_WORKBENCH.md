@@ -27,7 +27,7 @@ Three active implementation tasks maximum, up to four reviewers concurrently if 
 - Cloud tool access cannot be conferred via Git; human must connect repo, configure network/credentials and publish a reusable environment.
 
 ## Tooling
-- Skills: `.agents/skills/<name>/SKILL.md` (34 focused workflows).
+- Skills: `.agents/skills/<name>/SKILL.md` (35 focused workflows).
 - Thousand-audit register: `supervision/SWARM_AUDITS_1000.json` (25 domains × 40 probes, all initially NOT_RUN). Select with `python3 supervision/tools/audit_router.py --paths <changed-file> --limit 12`.
 - Internet research: `supervision/SWARM_EXTERNAL_SOURCES.json` (17 references, no untrusted external scripts installed).
 - Tool inventory: `supervision/REX_SWARM_TOOL_REGISTRY.md`.
