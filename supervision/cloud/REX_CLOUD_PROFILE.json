@@ -41,17 +41,20 @@
   "network": {
     "policy": "prefer-restricted-domain-allowlist-when-supported",
     "setup_domains": [
-      "go.dev",
-      "dl.google.com",
-      "github.com",
       "api.github.com",
-      "storage.googleapis.com",
-      "pub.dev",
-      "services.gradle.org",
-      "repo.maven.apache.org",
+      "dl.google.com",
+      "github-releases.githubusercontent.com",
+      "github.com",
+      "go.dev",
       "maven.google.com",
       "objects.githubusercontent.com",
-      "github-releases.githubusercontent.com"
+      "proxy.golang.org",
+      "pub.dev",
+      "raw.githubusercontent.com",
+      "repo.maven.apache.org",
+      "services.gradle.org",
+      "storage.googleapis.com",
+      "sum.golang.org"
     ],
     "notes": "Exact allowed hosts must be validated against observed redirects; no wildcard, no unrestricted internet by default. No assumption Codex UI accepts these names or automatically applies this file."
   },
