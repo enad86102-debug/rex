@@ -22,7 +22,8 @@ class AuditRouterTests(unittest.TestCase):
         entries = m.load_catalog(m.DEFAULT_PATH)
         packet = m.route(entries, ["production/server/internal/games/trixcomplex/engine.go"], 10)
         self.assertEqual(len(packet), 10)
-        self.assertTrue(all(x["category"] == "game" for x in packet))
+        self.assertTrue(any(x["domain"] == "trix_complex" for x in packet))
+        self.assertTrue(any(x["category"] == "game" for x in packet))
         self.assertTrue(all(x["status"] == "NOT_RUN" for x in packet))
 
     def test_private_hand_paths_get_security_lens(self):

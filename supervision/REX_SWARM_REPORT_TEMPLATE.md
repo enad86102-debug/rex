@@ -36,3 +36,8 @@ List P0-P2 with owner, impact, human decision class D0-D3 and smallest exit test
 
 ## Release gate and truthful handoff
 Production readiness by criterion; the exact current code and build/install commands; PR links; rollback; next bounded task. Do not substitute a 100-page essay for working code, verified tests or required signoffs.
+
+## Thousand-audit board coverage
+- Registry: 1000 defined/25 domains/NOT_RUN initially. State exact relevant audit IDs selected by router and how many were actually verified with evidence.
+- Count not run, blocked, reviewed/pass independently; never conflate registration, assignment and completion.
+- Internet skills: which trusted reference links were consulted, which original in-repo skill ran, and whether any external script was actually installed/executed.

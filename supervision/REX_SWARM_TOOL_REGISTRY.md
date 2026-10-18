@@ -21,3 +21,6 @@ Tool registration is not installation. Installed does not mean executed, and exe
 Before enabling any new tool: verify exact gap, trusted publisher/source, license, pinned version, required privileges, secrets boundary, smoke result, rollback, and CI cost. Avoid copying random GitHub skill scripts from the 1,548-repository research metadata. Credentials live outside Git.
 
 Skill discovery: repository-local `.agents/skills` may be read by Codex; if Cloud does not discover, open the relevant SKILL.md manually. A skill is an instruction workflow; it does not create access to Blender, Android phones, private services, external model APIs or accounts.
+
+## Source-aware expansion (2026-10-18)
+34 repo-local REX skills, 17 researched source references, and 1000 code-review assignments across 25 REX domains. The source registry marks all third-party skill code NOT_INSTALLED and NOT_REVIEWED_FOR_VENDORED_CODE. See `SWARM_EXTERNAL_SOURCES.json`, `INTERNET_SKILLS_RESEARCH.md`, `SWARM_AUDITS_1000.json` and `AUDIT_EXECUTION_PROTOCOL.md`. Executable metadata check: `python3 supervision/tools/audit_router.py --validate` (does not execute audits). Do not auto-download skills or infer permission to run external programs.

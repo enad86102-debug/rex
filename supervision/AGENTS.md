@@ -6,3 +6,5 @@ Select $rex-orchestrate at task kickoff and $rex-antimaze at final report. Manda
 Use real parallel subagents when available; otherwise report sequential single-agent passes. No pretend agent independence.
 Codex may build reversible D0/D1 patches; D2 changes require Abdulaziz technical review, D3 game rules/publishing/funding need required founder approval. Never infer approvals. No auto-merge/deploy.
 Do not abandon the real Go/Flutter production project for a newly bootstrapped demo. Report current code and real tests, not simply enormous essays.
+
+When coding a PR, use `$rex-thousand-audit-dispatch` to select only relevant review assignments from `SWARM_AUDITS_1000.json`; all 1000 remain NOT_RUN until actual evidence. Use `$rex-external-skill-guard` and source registry before importing any internet skill. No 1000-agent spawn; keep reviewer concurrency bounded.

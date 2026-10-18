@@ -9,6 +9,7 @@ fi
 cd "$ROOT"
 if [[ "$MODE" == "--policy" || "$MODE" == "--all" ]]; then
   python3 supervision/tools/swarm_check.py --root .
+  python3 supervision/tools/audit_router.py --validate
   python3 -m unittest discover -s supervision/tools -p 'test_*.py' -v
 fi
 if [[ "$MODE" == "--production" || "$MODE" == "--all" ]]; then

@@ -19,7 +19,9 @@
 Three active implementation tasks maximum, up to four reviewers concurrently if genuinely supported; code owner writes, reviewers inspect independently. Never have multiple agents editing the same files simultaneously.
 
 ## Tooling
-- Skills: `.agents/skills/<name>/SKILL.md` (18 focused workflows).
+- Skills: `.agents/skills/<name>/SKILL.md` (34 focused workflows).
+- Thousand-audit register: `supervision/SWARM_AUDITS_1000.json` (25 domains × 40 probes, all initially NOT_RUN). Select with `python3 supervision/tools/audit_router.py --paths <changed-file> --limit 12`.
+- Internet research: `supervision/SWARM_EXTERNAL_SOURCES.json` (17 references, no untrusted external scripts installed).
 - Tool inventory: `supervision/REX_SWARM_TOOL_REGISTRY.md`.
 - Machine-readable queue: `supervision/SWARM_TASK_BOARD.json`.
 - Repeatable checks: `python3 supervision/tools/swarm_check.py --root .` and `bash supervision/tools/run_checks.sh --policy`.
