@@ -1,0 +1,195 @@
+{
+  "schema": "rex.external-sources.v1",
+  "date": "2026-10-18",
+  "count": 17,
+  "notice": "Reference research only: no third-party skill's executable files were downloaded, installed, or given credentials. Original REX adaptation instructions were authored in-repo; external license/status must be individually verified before vendoring.",
+  "sources": [
+    {
+      "id": "agent-skills-spec",
+      "url": "https://agentskills.io/specification",
+      "claimed_owner": "Open Agent Skills specification",
+      "application": "Skill manifest schema and progressive disclosure",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "openai-agent-skills",
+      "url": "https://developers.openai.com/api/docs/guides/tools-skills",
+      "claimed_owner": "OpenAI",
+      "application": "Agents API and Responses skill packaging guidance",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "openai-multiagent",
+      "url": "https://developers.openai.com/api/docs/guides/agents-api/multi-agent",
+      "claimed_owner": "OpenAI",
+      "application": "Independent subagent orchestration, concurrency and shared environment caution",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "openai-repo-pattern",
+      "url": "https://developers.openai.com/blog/skills-agents-sdk",
+      "claimed_owner": "OpenAI",
+      "application": "Repository AGENTS.md and on-demand scoped SKILL.md practice",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "openai-skills-archive",
+      "url": "https://github.com/openai/skills",
+      "claimed_owner": "OpenAI",
+      "application": "Deprecated external catalog; do NOT auto-install; see current plugins guidance",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "anthropic-skill-creator",
+      "url": "https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md",
+      "claimed_owner": "Anthropic",
+      "application": "Illustrative skill writing patterns; code reuse requires individual license review",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "anthropic-webapp-testing",
+      "url": "https://github.com/anthropics/skills/blob/main/skills/webapp-testing/SKILL.md",
+      "claimed_owner": "Anthropic",
+      "application": "Only relevant to later admin-web testing; optional and third-party",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "google-gemini-skills-guide",
+      "url": "https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/skills-best-practices.md",
+      "claimed_owner": "Google",
+      "application": "Progressive disclosure and safety of skill scripts",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "owasp-api",
+      "url": "https://api-security.owasp.org/editions/2023/en/0x11-t10/",
+      "claimed_owner": "OWASP",
+      "application": "API authorization and resource exhaustion threat checks",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "owasp-masvs",
+      "url": "https://mas.owasp.org/MASVS/",
+      "claimed_owner": "OWASP",
+      "application": "Android mobile storage/auth/network/privacy baseline",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "go-security",
+      "url": "https://go.dev/doc/security/best-practices",
+      "claimed_owner": "Go project",
+      "application": "Fuzz/race/vet/known-vuln evidence",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "flutter-integration",
+      "url": "https://docs.flutter.dev/cookbook/testing/integration/introduction",
+      "claimed_owner": "Flutter project",
+      "application": "True application E2E integration guidance",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "flutter-profile",
+      "url": "https://docs.flutter.dev/cookbook/testing/integration/profiling",
+      "claimed_owner": "Flutter project",
+      "application": "Actual device frame/timeline measurement",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "khronos-validator",
+      "url": "https://github.com/KhronosGroup/glTF-Validator",
+      "claimed_owner": "Khronos Group",
+      "application": "GLB structure and animation channels; not visual acceptance",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "slsa",
+      "url": "https://slsa.dev/spec/v1.1/",
+      "claimed_owner": "SLSA",
+      "application": "Build provenance concepts; implementation and verification not claimed",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "android-api-target",
+      "url": "https://developer.android.com/google/play/requirements/target-sdk",
+      "claimed_owner": "Android Developers",
+      "application": "Google Play target API requirements and release checks",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    },
+    {
+      "id": "go-fuzz",
+      "url": "https://go.dev/doc/security/fuzz/",
+      "claimed_owner": "Go project",
+      "application": "Native fuzz targets and limiting coverage claims",
+      "discovery": "WEB_RESEARCH",
+      "installation_status": "NOT_INSTALLED",
+      "code_copied": false,
+      "license_status": "NOT_REVIEWED_FOR_VENDORED_CODE",
+      "allowed_use": "Read guidance, review REX adaptation, never autoexecute external scripts"
+    }
+  ]
+}

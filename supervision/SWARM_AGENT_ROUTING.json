@@ -1,0 +1,129 @@
+{
+  "schema": "rex.swarm.agent-routing.v1",
+  "disclaimer": "Review roles are definitions, not evidence subagents have been spawned.",
+  "max_parallel_subagents": 4,
+  "max_simultaneous_code_owners": 3,
+  "reviewers": [
+    {
+      "id": "SW-00",
+      "role": "orchestrator",
+      "skills": [
+        "rex-orchestrate",
+        "rex-antimaze"
+      ],
+      "blocking_veto": false
+    },
+    {
+      "id": "SW-01",
+      "role": "rules custodian",
+      "skills": [
+        "rex-trix-acceptance",
+        "rex-tarneeb-contract"
+      ],
+      "blocking_veto": true
+    },
+    {
+      "id": "SW-02",
+      "role": "Go rules engine",
+      "skills": [
+        "rex-go-engine",
+        "rex-trix-acceptance"
+      ],
+      "blocking_veto": false
+    },
+    {
+      "id": "SW-03",
+      "role": "player views",
+      "skills": [
+        "rex-match-privacy",
+        "rex-flutter-android"
+      ],
+      "blocking_veto": true
+    },
+    {
+      "id": "SW-04",
+      "role": "red team security",
+      "skills": [
+        "rex-api-security",
+        "rex-match-privacy"
+      ],
+      "blocking_veto": true
+    },
+    {
+      "id": "SW-05",
+      "role": "transaction durability",
+      "skills": [
+        "rex-atomic-persistence"
+      ],
+      "blocking_veto": true
+    },
+    {
+      "id": "SW-06",
+      "role": "match transport",
+      "skills": [
+        "rex-realtime-transport"
+      ],
+      "blocking_veto": false
+    },
+    {
+      "id": "SW-07",
+      "role": "Android client",
+      "skills": [
+        "rex-flutter-android"
+      ],
+      "blocking_veto": false
+    },
+    {
+      "id": "SW-08",
+      "role": "cinematic art",
+      "skills": [
+        "rex-cinematic-assets",
+        "rex-graphics-performance"
+      ],
+      "blocking_veto": true
+    },
+    {
+      "id": "SW-09",
+      "role": "load capacity",
+      "skills": [
+        "rex-performance-load",
+        "rex-graphics-performance"
+      ],
+      "blocking_veto": false
+    },
+    {
+      "id": "SW-10",
+      "role": "SRE operations",
+      "skills": [
+        "rex-operations-recovery"
+      ],
+      "blocking_veto": false
+    },
+    {
+      "id": "SW-11",
+      "role": "CI regression",
+      "skills": [
+        "rex-ci-qa"
+      ],
+      "blocking_veto": true
+    },
+    {
+      "id": "SW-12",
+      "role": "release/legal",
+      "skills": [
+        "rex-release-supervisor",
+        "rex-toolchain-audit"
+      ],
+      "blocking_veto": true
+    },
+    {
+      "id": "SW-13",
+      "role": "skeptic/anti-maze",
+      "skills": [
+        "rex-antimaze",
+        "rex-pr-stack-review"
+      ],
+      "blocking_veto": false
+    }
+  ]
+}

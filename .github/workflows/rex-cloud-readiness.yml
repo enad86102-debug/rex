@@ -1,0 +1,30 @@
+name: REX Codex Cloud readiness
+on:
+  pull_request:
+    paths:
+      - 'supervision/cloud/**'
+      - '.github/workflows/rex-cloud-readiness.yml'
+  push:
+    branches: ['supervision/**']
+    paths:
+      - 'supervision/cloud/**'
+      - '.github/workflows/rex-cloud-readiness.yml'
+
+permissions:
+  contents: read
+jobs:
+  cloud-setup-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Offline cloud configuration and privilege policy tests
+        run: python3 -m unittest discover -s supervision/cloud -p 'test_*.py' -v
+      - name: Shell syntax and safe no-op mode
+        run: |
+          bash -n supervision/cloud/setup_rex_cloud.sh
+          bash supervision/cloud/setup_rex_cloud.sh --profile core --dry-run
+      - name: Core capability inventory (not a production test)
+        run: python3 supervision/cloud/cloud_doctor.py --profile core --json

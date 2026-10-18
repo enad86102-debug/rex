@@ -1,0 +1,106 @@
+{
+  "schema": "rex.cloud.access-matrix.v1",
+  "principle": "least privilege, short-lived credentials, human approvals for irreversible actions",
+  "profiles": [
+    {
+      "id": "review",
+      "name": "review-and-research",
+      "permissions": [
+        "git-read",
+        "github-pr-read",
+        "actions-logs-read",
+        "docs-read"
+      ],
+      "denied": [
+        "git-force-push",
+        "repo-administration",
+        "secrets-read",
+        "prod-deploy",
+        "play-publish",
+        "billing",
+        "paid-tools-install"
+      ],
+      "user_approval_required_for": []
+    },
+    {
+      "id": "build",
+      "name": "scoped-engineering",
+      "permissions": [
+        "repo-read",
+        "isolated-branch-write",
+        "draft-pr-create",
+        "ci-read",
+        "test-dependency-download"
+      ],
+      "denied": [
+        "main-direct-write",
+        "git-force-push",
+        "secrets-administration",
+        "branch-protection-change",
+        "prod-deploy",
+        "play-publish",
+        "release-signing"
+      ],
+      "user_approval_required_for": [
+        "GitHub connection and repository authorization",
+        "enabling setup-network access in Codex environment"
+      ]
+    },
+    {
+      "id": "release",
+      "name": "human-operated-release",
+      "permissions": [
+        "review-release-packet",
+        "review-signed-aab-requirements"
+      ],
+      "denied": [
+        "automatic-play-publish",
+        "unreviewed-prod-deploy",
+        "expose-signing-keys"
+      ],
+      "user_approval_required_for": [
+        "human founder approval",
+        "Abdulaziz technical approval",
+        "human-controlled signing and publishing operation"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "name": "GitHub",
+      "required": "repo code read, new development branch write, PR draft, Actions/logs read via connected GitHub identity",
+      "not_required": "organization admin, branch protection write, delete repository, edit secrets"
+    },
+    {
+      "name": "Go / Flutter / Android packages",
+      "required": "temporary outbound access to trusted official package hosts for setup; pinned versions and checksums where possible",
+      "not_required": "unrestricted ongoing internet"
+    },
+    {
+      "name": "Google Play",
+      "required": "no access for ordinary development",
+      "not_required": "Play console login, publish tokens, signing keys"
+    },
+    {
+      "name": "3D / artwork",
+      "required": "owned/licensed project art plus approved Blender tooling",
+      "not_required": "paid API keys or copying restricted art from arbitrary sources"
+    },
+    {
+      "name": "Database / production service",
+      "required": "isolated local test database only until technical design approval",
+      "not_required": "production database root/admin keys"
+    },
+    {
+      "name": "Monitoring",
+      "required": "test logs and synthetic non-sensitive events",
+      "not_required": "live user data or personal health/financial information"
+    }
+  ],
+  "credential_protection": [
+    "No tokens in repository, chat text, screenshots, shell arguments, logs or PR descriptions.",
+    "Use connected GitHub authorization instead of user-supplied PAT when possible.",
+    "When external credentials are unavoidable, scope to non-production tasks and supply via approved environment credential controls.",
+    "Only the user/workspace admin may grant platform access. This document cannot change permissions."
+  ]
+}
