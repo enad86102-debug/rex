@@ -37,12 +37,22 @@ class DoctorTests(unittest.TestCase):
 
     @patch.object(doctor, "tool_status")
     def test_core_can_report_tooling_ready_not_game_ready(self, fake):
-        fake.side_effect = lambda name: {"present": True, "version": "go1.27.2" if name == "go" else "v"}
+        fake.side_effect = lambda name: {"present": True, "version": "go1.27.2" if name == "go" else "v",
+                                         "version_command_ok": True}
         with tempfile.TemporaryDirectory() as tmp:
             report = doctor.inspect(Path(tmp), "core")
             self.assertEqual(report["verdict"], "READY_TOOLING_BASELINE")
             self.assertIn("Environment capability inventory", report["meaning"])
             self.assertFalse(report["network_access_tested"])
+
+    @patch.object(doctor, "tool_status")
+    def test_unrelated_go_executable_cannot_pass_core_readiness(self, fake):
+        fake.side_effect = lambda name: {"present": True, "version": "Go: Unknown option: version" if name == "go" else "v",
+                                         "version_command_ok": name != "go"}
+        with tempfile.TemporaryDirectory() as tmp:
+            report = doctor.inspect(Path(tmp), "core")
+        self.assertEqual(report["verdict"], "MISSING_PREREQUISITES")
+        self.assertIn("go", report["version_mismatch"])
 
 
 if __name__ == "__main__":

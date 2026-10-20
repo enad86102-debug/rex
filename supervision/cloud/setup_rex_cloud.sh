@@ -51,10 +51,23 @@ if [ "$DRY_RUN" -eq 1 ]; then
   exit 0
 fi
 mkdir -p "$CACHE_ROOT"
+# Reuse verified toolchains provisioned by the managed workspace. In this
+# environment /usr/bin/go is an unrelated desktop game, so never treat its
+# mere presence as evidence of the Go compiler.
+GO_BIN="$CACHE_ROOT/go-$GO_VERSION/bin"
+FLUTTER_BIN="$CACHE_ROOT/flutter-$FLUTTER_VERSION/bin"
+if [ ! -x "$GO_BIN/go" ] && [ -x "$ROOT/../shared/go-current/go/bin/go" ] &&
+   "$ROOT/../shared/go-current/go/bin/go" version | grep -q "go$GO_VERSION "; then
+  GO_BIN="$ROOT/../shared/go-current/go/bin"
+fi
+if [ ! -x "$FLUTTER_BIN/flutter" ] && [ -x "$ROOT/../shared/flutter-sdk/flutter/bin/flutter" ] &&
+   "$ROOT/../shared/flutter-sdk/flutter/bin/flutter" --version --machine | grep -q '"frameworkVersion": "3.35.7"'; then
+  FLUTTER_BIN="$ROOT/../shared/flutter-sdk/flutter/bin"
+fi
 # This shell fragment is not automatically sourced; user/environment must opt in.
 cat > "$CACHE_ROOT/env.sh" <<EOF
 # REX local cloud toolchain paths; contains NO secrets.
-export PATH="$CACHE_ROOT/go-$GO_VERSION/bin:$CACHE_ROOT/flutter-$FLUTTER_VERSION/bin:\$PATH"
+export PATH="$GO_BIN:$FLUTTER_BIN:\$PATH"
 export PUB_CACHE="$CACHE_ROOT/pub-cache"
 export GRADLE_USER_HOME="$CACHE_ROOT/gradle"
 EOF
