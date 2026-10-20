@@ -343,7 +343,7 @@ class _RexHomeState extends State<RexHome> {
             subtitle: seats[i] == null
                 ? const Text(RexStrings.waiting)
                 : Text(
-                    'لاعب ${(seats[i] as Map)['player_id'].toString().substring(0, 8)}',
+                    RexStrings.playerSeat((seats[i] as Map)['player_id']),
                     textDirection: TextDirection.rtl,
                   ),
             trailing: seats[i] != null && (seats[i] as Map)['ready'] == true
