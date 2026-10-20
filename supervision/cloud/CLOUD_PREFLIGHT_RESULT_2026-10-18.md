@@ -17,7 +17,7 @@
 | شبكة Cloud | حالة المنصة `connected`، سياسة HTTP `unrestricted/enforced`، والفحص حديث؛ إعداد REX يفضل سياسة أضيق، لكنه لا يغير سياسة المنصة. لا أسرار أو هويات outbound مهيأة وفق حالة البيئة. |
 | Go | 1.27.2 موجود في `/workspace/shared/go-current/go/bin`، لكنه ليس في `PATH` الافتراضي؛ `/usr/bin/go` برنامج لعبة Go مختلف. اختبارات الإنتاج استعملت المسار الصحيح. |
 | Flutter/Dart | Flutter 3.35.7 وDart 3.9.2 موجودان في `/workspace/shared/flutter-sdk/flutter/bin`، وليس في `PATH` الافتراضي. |
-| Java | Java 21.0.12.1 متاح؛ Java 17 المطلوب غير موجود في المسارات المفحوصة. |
+| Java | Java 21.0.12.1 متاح؛ Java 17 غير موجود. المشروع يستهدف bytecode 17 لكن `production/mobile/README.md` يذكر JDK 21 لتشغيل Gradle؛ غياب Java 17 وحده ليس مانعًا مثبتًا. |
 | Android | `sdkmanager` و`adb` وSDK platform 36 غائبة؛ `flutter doctor -v` يرفض Android toolchain. لا دليل جهاز فعلي أو KVM. |
 | إضافي | Git 2.52.0، Python 3.12.14، Blender 4.3.2، Node 24.19.0، npm 11.9.0. Blender موجود ولا يثبت جودة أو حقوق أصول REX. |
 | أدوات الإشراف | 35 ملف `SKILL.md` محلي اكتُشفت؛ `swarm_check.py` يقرر PASS للبيانات الوصفية. سجل 1000 مهمة تدقيق صحيح بنيويًا، و`execution_state=NOT_RUN`، أي **0 تدقيق منفذ**. |
@@ -33,6 +33,6 @@
 
 ## ما بقي لتهيئة Android المحلية
 
-توفير Java 17 وAndroid command-line tools مع `sdkmanager` و`adb` وplatform/build-tools API 36 عبر إعداد بيئة Codex المعتمد. لا يشغّل سكربت REX تثبيت Android إلا إذا وُجد `sdkmanager` وكانت التراخيص مقبولة مسبقًا من مالك الحساب؛ لم نوافق على التراخيص أو نثبّت مكونات من مصدر بديل. يجب إعادة Cloud Doctor وبناء Android بعد الإتاحة. كما ينبغي أن تعرض بيئة المهام مساري Go/Flutter الصحيحين في `PATH`؛ وجود الملفات وحده لا يضمن اكتشافها في مهمة جديدة.
+توفير Android command-line tools مع `sdkmanager` و`adb` وplatform/build-tools API 36 عبر إعداد بيئة Codex المعتمد. تحقّق من بناء Gradle الفعلي على Java 21؛ ثبّت Java 17 فقط إذا فشل التوافق أو اشترطه إصدار الأداة المستخدم. لا يشغّل سكربت REX تثبيت Android إلا إذا وُجد `sdkmanager` وكانت التراخيص مقبولة مسبقًا من مالك الحساب؛ لم نوافق على التراخيص أو نثبّت مكونات من مصدر بديل. يجب إعادة Cloud Doctor وبناء Android بعد الإتاحة. كما ينبغي أن تعرض بيئة المهام مساري Go/Flutter الصحيحين في `PATH`؛ وجود الملفات وحده لا يضمن اكتشافها في مهمة جديدة.
 
 فحص المصدر والتطوير غير الأصلي ممكن الآن على الفرع المعزول. لا تبدأ مهمة الإنتاج الكبرى أو تدعي جاهزية Android المحلية قبل إزالة العوائق المذكورة.

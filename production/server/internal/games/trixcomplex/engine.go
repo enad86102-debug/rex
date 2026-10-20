@@ -393,6 +393,46 @@ func (m *Match) View(actorID string) (PlayerMatchView, error) {
 	return view, nil
 }
 
+// LegalMoves exposes only the named actor's current options. A future HTTP
+// adapter MUST derive actorID from the authenticated bearer session, never
+// from a client-supplied actor field or query parameter. The projection does
+// not grant authority: Apply still validates the current server state.
+func (m *Match) LegalMoves(actorID string) (PlayerLegalMoves, error) {
+	if m == nil {
+		return PlayerLegalMoves{}, ErrInvalidState
+	}
+	seat, err := m.seatFor(actorID)
+	if err != nil {
+		return PlayerLegalMoves{}, err
+	}
+	moves := PlayerLegalMoves{Version: m.version}
+	if seat != m.turn {
+		return moves, nil
+	}
+	switch m.phase {
+	case ContractSelection:
+		for _, contract := range []ContractType{Complex, Trix} {
+			if !m.used[m.kingdom][contractIndex(contract)] {
+				moves.Contracts = append(moves.Contracts, contract)
+			}
+		}
+	case ComplexActive:
+		for _, card := range m.hands[seat] {
+			if complexLegal(m.hands[seat], m.trick, card) {
+				moves.Cards = append(moves.Cards, card)
+			}
+		}
+	case TrixActive:
+		for _, card := range m.hands[seat] {
+			if TrixLegal(m.layout, m.hands[seat], card) {
+				moves.Cards = append(moves.Cards, card)
+			}
+		}
+		moves.CanPass = len(moves.Cards) == 0
+	}
+	return moves, nil
+}
+
 func (m *Match) Result() (MatchResult, error) {
 	if m == nil || m.phase != MatchComplete {
 		return MatchResult{}, ErrInvalidState

@@ -9,6 +9,8 @@ rex_package="dev.rex.internal.rex_production"
 rex_apk="$rex_root/production/mobile/build/app/outputs/flutter-apk/app-debug.apk"
 rex_screenshot="${REX_ANDROID_SCREENSHOT:-/tmp/rex-android-home.png}"
 rex_room_screenshot="${REX_ANDROID_ROOM_SCREENSHOT:-/tmp/rex-android-room.png}"
+rex_video="${REX_ANDROID_VIDEO:-}"
+rex_device_video="/sdcard/rex-app-smoke.mp4"
 rex_temp="$(mktemp -d)"
 rex_server_pid=""
 cleanup() {
@@ -81,6 +83,11 @@ rex_tap_text() {
 test -s "$rex_apk"
 adb -s "$rex_device" install -r "$rex_apk" >/dev/null
 adb -s "$rex_device" shell pm path "$rex_package" | grep -Fq 'package:'
+if [[ -n "$rex_video" ]]; then
+  adb -s "$rex_device" shell rm -f "$rex_device_video"
+  adb -s "$rex_device" shell screenrecord --time-limit 120 "$rex_device_video" >/dev/null 2>&1 &
+  rex_video_pid=$!
+fi
 adb -s "$rex_device" shell am force-stop "$rex_package"
 adb -s "$rex_device" shell am start -W -n "$rex_package/.MainActivity" | grep -Fq 'Status: ok'
 
@@ -96,4 +103,11 @@ rex_tap_text 'إنشاء طاولة'
 rex_find_text 'الشمال' >/dev/null
 adb -s "$rex_device" exec-out screencap -p > "$rex_room_screenshot"
 test -s "$rex_room_screenshot"
+if [[ -n "$rex_video" ]]; then
+  adb -s "$rex_device" shell 'for pid in $(pidof screenrecord); do kill -2 "$pid"; done'
+  # screenrecord may report an interrupted exit after its MP4 is finalized.
+  wait "$rex_video_pid" || true
+  adb -s "$rex_device" pull "$rex_device_video" "$rex_video" >/dev/null
+  test -s "$rex_video"
+fi
 echo 'Production debug APK installed, launched, entered as guest, and created a server-backed table on Android emulator.'

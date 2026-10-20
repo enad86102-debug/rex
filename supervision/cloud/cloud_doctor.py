@@ -63,6 +63,14 @@ def inspect(root: Path, profile: str) -> dict:
     tools = sorted(set(mandatory) | set(ART_OPTIONAL) | {"curl"})
     result = {name: tool_status(name) for name in tools}
     missing = [name for name in mandatory if not result[name]["present"]]
+    mismatched = []
+    if result["go"]["present"] and (not result["go"].get("version_command_ok") or
+                                      f"go{PIN_GO}" not in result["go"].get("version", "")):
+        mismatched.append("go")
+    if profile in ("android", "art") and result["flutter"]["present"] and (
+            not result["flutter"].get("version_command_ok") or
+            result["flutter"].get("version") != PIN_FLUTTER):
+        mismatched.append("flutter")
     warnings = []
     if result["go"]["present"] and PIN_GO not in result["go"].get("version", ""):
         warnings.append(f"Go differs from verified production CI {PIN_GO}; compare compatibility.")
@@ -83,13 +91,13 @@ def inspect(root: Path, profile: str) -> dict:
         warnings.append("Blender unavailable; source modeling/rigging cannot be asserted.")
     if result.get("go", {}).get("present") and not prod:
         warnings.append("Go available but REX production source not available for tests in this checkout.")
-    verdict = "READY_TOOLING_BASELINE" if not missing and (profile == "core" or sdk_36) else "MISSING_PREREQUISITES"
+    verdict = "READY_TOOLING_BASELINE" if not missing and not mismatched and (profile == "core" or sdk_36) else "MISSING_PREREQUISITES"
     return {
         "schema": "rex.cloud.doctor.v1", "profile": profile,
         "verdict": verdict,
         "meaning": "Environment capability inventory ONLY; not real multiplayer or release readiness.",
         "runtime": {"system": platform.system(), "arch": platform.machine()},
-        "tools": result, "required_missing": missing,
+        "tools": result, "required_missing": missing, "version_mismatch": mismatched,
         "production_source_present": prod, "repo_skill_count": count,
         "android_sdk_36_present": sdk_36, "warnings": warnings,
         "secrets_inspected": False, "network_access_tested": False,

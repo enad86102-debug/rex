@@ -30,6 +30,8 @@ abstract final class RexStrings {
   static const unavailable =
       'يمكن تجهيز طاولة خاصة ودعوة اللاعبين. اللعب غير متاح حاليًا.';
   static const seats = ['الشمال', 'الشرق', 'الجنوب', 'الغرب'];
+  static String playerSeat(Object? id) =>
+      id is String && id.length >= 8 ? 'لاعب ${id.substring(0, 8)}' : 'لاعب';
   static String game(String value) =>
       value == 'tarneeb' ? 'طرنيب' : 'تركس كومبلكس';
   static String failure(String code) => switch (code) {

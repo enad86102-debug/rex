@@ -155,3 +155,12 @@ type PlayerMatchView struct {
 	Scores         [4]int       `json:"scores"`
 	CompletedDeals uint8        `json:"completed_deals"`
 }
+
+// PlayerLegalMoves is a private, advisory projection for the authenticated
+// actor. Apply remains authoritative and rechecks the turn and state version.
+type PlayerLegalMoves struct {
+	Version   uint64         `json:"version"`
+	Contracts []ContractType `json:"contracts,omitempty"`
+	Cards     []cards.Card   `json:"cards,omitempty"`
+	CanPass   bool           `json:"can_pass"`
+}

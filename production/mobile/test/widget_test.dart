@@ -48,6 +48,22 @@ class RoomTransport extends Transport {
 }
 
 void main() {
+  testWidgets('malformed seat identifier does not crash the waiting room', (
+    tester,
+  ) async {
+    final transport = RoomTransport();
+    (transport.table!['seats'] as List)[1] = {'player_id': 'x', 'ready': false};
+    final c = RexController(transport, MemoryVault());
+    await c.initialize();
+    await c.enterGuest();
+    await c.retry();
+    await tester.pumpWidget(RexApp(controller: c));
+    await tester.pumpAndSettle();
+    expect(find.text('لاعب'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets('damaged guest record is reset only after confirmation', (
     tester,
   ) async {

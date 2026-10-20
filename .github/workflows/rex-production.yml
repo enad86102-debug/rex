@@ -133,7 +133,7 @@ jobs:
           flutter pub get --enforce-lockfile
           flutter build apk --debug --no-pub
           cd ../..
-          REX_ANDROID_SCREENSHOT="$RUNNER_TEMP/rex-home.png" REX_ANDROID_ROOM_SCREENSHOT="$RUNNER_TEMP/rex-room.png" bash production/tools/check_android_app.sh
+          REX_ANDROID_SCREENSHOT="$RUNNER_TEMP/rex-home.png" REX_ANDROID_ROOM_SCREENSHOT="$RUNNER_TEMP/rex-room.png" REX_ANDROID_VIDEO="$RUNNER_TEMP/rex-room-flow.mp4" bash production/tools/check_android_app.sh
       - name: Preserve internal Android install evidence
         if: success()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -143,6 +143,7 @@ jobs:
             production/mobile/build/app/outputs/flutter-apk/app-debug.apk
             ${{ runner.temp }}/rex-home.png
             ${{ runner.temp }}/rex-room.png
+            ${{ runner.temp }}/rex-room-flow.mp4
           retention-days: 7
 
   legacy-regression:
