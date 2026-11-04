@@ -9,6 +9,7 @@ import (
 	"io"
 	"mime"
 	"net/http"
+	"os"
 	"strings"
 
 	"rex/production/server/internal/service"
@@ -56,7 +57,7 @@ func NewCandidate(s *service.Service, c *service.CandidateCoordinator, options .
 }
 
 func candidateFail(w http.ResponseWriter, err error) {
-	if errors.Is(err, io.EOF) || errors.Is(err, http.ErrMissingFile) {
+	if errors.Is(err, io.EOF) || errors.Is(err, os.ErrNotExist) {
 		fail(w, service.ErrNotFound)
 		return
 	}

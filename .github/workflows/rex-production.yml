@@ -47,6 +47,10 @@ jobs:
           go test -race -cover ./...
           go vet ./...
           go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+      - name: Candidate match security and integration tests (non-public)
+        working-directory: production/server
+        run: |
+          go test -tags rex_candidate -race -count=1 -timeout 8m ./internal/games/trixcomplex ./internal/service ./internal/api
       - name: Asset intake tests
         run: |
           python3 -m unittest discover -s production/tools -p 'test_*.py'
