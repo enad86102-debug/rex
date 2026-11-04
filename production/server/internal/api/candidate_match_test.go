@@ -22,6 +22,7 @@ type candidateTestHarness struct {
 	c      *service.CandidateCoordinator
 	tokens [4]string
 	id     string
+	version uint64
 	calls  int
 }
 
@@ -64,6 +65,7 @@ func candidateHarness(t *testing.T) *candidateTestHarness {
 		}
 	}
 	h.id = table.ID
+	h.version = table.Version
 	h.c = service.NewCandidateCoordinator(s, filepath.Join(root, "candidate-private"))
 	h.h = NewCandidate(s, h.c)
 	return h
@@ -117,7 +119,7 @@ func TestCandidateRoutesAbsentFromPublicAPI(t *testing.T) {
 		t.Fatalf("public rexd unexpectedly exposes candidate route: HTTP %d", rec.Code)
 	}
 	status, raw := h.call(0, http.MethodPost, "/v1/tables/"+h.id+"/start",
-		map[string]any{"action_id": "public-start-000000001", "expected_version": 5})
+		map[string]any{"action_id": "public-start-000000001", "expected_version": h.version})
 	if status != http.StatusServiceUnavailable || !bytes.Contains(raw, []byte("rules_not_approved")) {
 		t.Fatalf("public match activation should remain gated: %d %s", status, raw)
 	}
@@ -251,4 +253,31 @@ func TestCandidateFourAuthenticatedClientsFullEightDeals(t *testing.T) {
 		}
 	}
 	t.Fatal("eight-deal candidate game did not complete")
+}
+
+func TestCandidateRosterChangeAndOutsiderFailClosed(t *testing.T) {
+	h := candidateHarness(t)
+	base := "/v1/tables/" + h.id + "/match"
+	h.response(0, http.MethodPost, base+"/start", map[string]any{})
+	outsider, err := h.s.NewGuest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	req := httptest.NewRequest(http.MethodGet, base, nil)
+	req.Header.Set("Authorization", "Bearer "+outsider.Token)
+	rec := httptest.NewRecorder()
+	h.h.ServeHTTP(rec, req)
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("outsider should be denied: HTTP %d", rec.Code)
+	}
+	if _, err := h.s.Act(h.tokens[0], "leave", h.id, service.Command{
+		ActionID: "candidate-owner-leave-00001",
+		ExpectedVersion: h.version,
+	}); err != nil {
+		t.Fatal(err)
+	}
+	status, body := h.call(1, http.MethodGet, base, nil)
+	if status != http.StatusConflict {
+		t.Fatalf("changed room roster did not fail closed: HTTP %d %s", status, body)
+	}
 }
