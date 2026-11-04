@@ -2,6 +2,9 @@ package trixcomplex
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	"slices"
@@ -28,6 +31,7 @@ type privateCheckpoint struct {
 	Version     uint64                `json:"version"`
 	Phase       Phase                 `json:"phase"`
 	Scores      [4]int                `json:"scores"`
+	Integrity   string                `json:"integrity"`
 }
 
 // Clone isolates a proposed state transition from the committed match. A
@@ -82,6 +86,11 @@ func (m *Match) PrivateCheckpoint() ([]byte, error) {
 			cp.Journal[i].Action = &action
 		}
 	}
+	digest, err := checkpointDigest(cp)
+	if err != nil {
+		return nil, ErrInvalidState
+	}
+	cp.Integrity = digest
 	encoded, err := json.Marshal(cp)
 	if err != nil || len(encoded) > maxPrivateCheckpointBytes {
 		return nil, ErrInvalidState
@@ -103,6 +112,12 @@ func RestoreCandidateMatch(data []byte) (*Match, error) {
 		return nil, ErrInvalidState
 	}
 	if err := decoder.Decode(new(any)); err != io.EOF || cp.Schema != 1 {
+		return nil, ErrInvalidState
+	}
+	storedIntegrity := cp.Integrity
+	cp.Integrity = ""
+	digest, err := checkpointDigest(cp)
+	if err != nil || subtle.ConstantTimeCompare([]byte(storedIntegrity), []byte(digest)) != 1 {
 		return nil, ErrInvalidState
 	}
 	m, err := NewCandidateMatch(cp.MatchID, cp.Profile, cp.Members, cp.InitialDeck)
@@ -129,4 +144,14 @@ func RestoreCandidateMatch(data []byte) (*Match, error) {
 		return nil, ErrInvalidState
 	}
 	return m, nil
+}
+
+func checkpointDigest(cp privateCheckpoint) (string, error) {
+	cp.Integrity = ""
+	data, err := json.Marshal(cp)
+	if err != nil {
+		return "", err
+	}
+	digest := sha256.Sum256(data)
+	return hex.EncodeToString(digest[:]), nil
 }
