@@ -72,8 +72,8 @@ func (m *Match) PrivateCheckpoint() ([]byte, error) {
 	cp := privateCheckpoint{
 		Schema: 1, MatchID: m.id, Profile: m.profile, Members: m.members,
 		InitialDeck: slices.Clone(m.initialDeck),
-		Journal: make([]privateJournalEntry, len(m.journal)),
-		Version: m.version, Phase: m.phase, Scores: m.scores,
+		Journal:     make([]privateJournalEntry, len(m.journal)),
+		Version:     m.version, Phase: m.phase, Scores: m.scores,
 	}
 	for i, entry := range m.journal {
 		cp.Journal[i].Deck = slices.Clone(entry.deck)
