@@ -93,3 +93,31 @@ func TestRestoreCandidateMatchRejectsAlteredData(t *testing.T) {
 		}
 	}
 }
+
+func TestRestoreCandidateMatchRejectsAlteredReceiptIdentity(t *testing.T) {
+	m := newTestMatch(t)
+	action := candidateAction(m, m.owner, ChooseContract, 1)
+	action.Contract = Complex
+	if _, err := m.Apply(action); err != nil {
+		t.Fatal(err)
+	}
+	checkpoint, err := m.PrivateCheckpoint()
+	if err != nil {
+		t.Fatal(err)
+	}
+	var decoded map[string]any
+	if err := json.Unmarshal(checkpoint, &decoded); err != nil {
+		t.Fatal(err)
+	}
+	journal := decoded["journal"].([]any)
+	entry := journal[0].(map[string]any)
+	storedAction := entry["action"].(map[string]any)
+	storedAction["action_id"] = "altered-receipt-identity"
+	altered, err := json.Marshal(decoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := RestoreCandidateMatch(altered); !errors.Is(err, ErrInvalidState) {
+		t.Fatalf("accepted altered durable receipt identity: %v", err)
+	}
+}
