@@ -34,7 +34,6 @@ jobs:
       - name: Go verification
         working-directory: production/server
         run: |
-          gofmt -d .
           test -z "$(gofmt -l .)"
           go test -race -cover ./...
           go vet ./...
