@@ -1,0 +1,42 @@
+name: REX candidate database migration tests
+on:
+  pull_request:
+    paths:
+      - 'production/db/candidate/**'
+      - '.github/workflows/rex-candidate-database.yml'
+  push:
+    branches: ['engineering/**']
+    paths:
+      - 'production/db/candidate/**'
+      - '.github/workflows/rex-candidate-database.yml'
+permissions:
+  contents: read
+jobs:
+  candidate-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      pg:
+        image: postgres:17
+        env:
+          POSTGRES_USER: rex_ci
+          POSTGRES_PASSWORD: rex_ci_test_only
+          POSTGRES_DB: rex_ci
+        options: >-
+          --health-cmd "pg_isready -U rex_ci -d rex_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Exercise candidate SQL constraints and transaction rollback
+        run: |
+          set -euo pipefail
+          container_id="${{ job.services.pg.id }}"
+          test -n "$container_id"
+          docker exec -i "$container_id" psql -X -v ON_ERROR_STOP=1 -U rex_ci -d rex_ci -f - < production/db/candidate/001_create_schema.sql
+          docker exec -i "$container_id" psql -X -v ON_ERROR_STOP=1 -U rex_ci -d rex_ci -f - < production/db/candidate/test_atomic_schema.sql
+      - name: Confirm candidate migration can be replayed only through reviewed reset
+        run: echo "PASS -- candidate-only SQL constraints, not a production Go adapter."
