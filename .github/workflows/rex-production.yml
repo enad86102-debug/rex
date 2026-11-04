@@ -22,6 +22,17 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      # Gradle 8.12 / AGP 8.9.1 in production are verified on JDK 21.
+      # ubuntu-latest can change its default JDK (CI recently selected Java 25).
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Verify Android build JDK
+        run: |
+          java -version
+          test "${JAVA_HOME:-}" != ""
+          "${JAVA_HOME}/bin/java" -version
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
           go-version: '1.27.3'
@@ -75,6 +86,17 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+      # Gradle 8.12 / AGP 8.9.1 in production are verified on JDK 21.
+      # ubuntu-latest can change its default JDK (CI recently selected Java 25).
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Verify Android build JDK
+        run: |
+          java -version
+          test "${JAVA_HOME:-}" != ""
+          "${JAVA_HOME}/bin/java" -version
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
           go-version: '1.27.3'
