@@ -16,14 +16,14 @@ import (
 )
 
 type candidateTestHarness struct {
-	t      *testing.T
-	h      http.Handler
-	s      *service.Service
-	c      *service.CandidateCoordinator
-	tokens [4]string
-	id     string
+	t       *testing.T
+	h       http.Handler
+	s       *service.Service
+	c       *service.CandidateCoordinator
+	tokens  [4]string
+	id      string
 	version uint64
-	calls  int
+	calls   int
 }
 
 func candidateHarness(t *testing.T) *candidateTestHarness {
@@ -43,7 +43,7 @@ func candidateHarness(t *testing.T) *candidateTestHarness {
 		h.tokens[i] = guest.Token
 		if i == 0 {
 			table, err = s.Act(h.tokens[0], "create", "", service.Command{
-				ActionID: fmt.Sprintf("candidate-create-%016d", i), Game: "trix_complex",
+				ActionID:        fmt.Sprintf("candidate-create-%016d", i), Game: "trix_complex",
 			})
 		} else {
 			table, err = s.Act(h.tokens[i], "join", "", service.Command{
@@ -203,7 +203,7 @@ func TestCandidateFourAuthenticatedClientsFullEightDeals(t *testing.T) {
 		v := h.response(seat, http.MethodGet, base, nil)
 		num++
 		action := map[string]any{
-			"action_id": fmt.Sprintf("candidate-complete-%016d", num),
+			"action_id":        fmt.Sprintf("candidate-complete-%016d", num),
 			"expected_version": v.View.Version,
 		}
 		switch v.View.Phase {
@@ -271,7 +271,7 @@ func TestCandidateRosterChangeAndOutsiderFailClosed(t *testing.T) {
 		t.Fatalf("outsider should be denied: HTTP %d", rec.Code)
 	}
 	if _, err := h.s.Act(h.tokens[0], "leave", h.id, service.Command{
-		ActionID: "candidate-owner-leave-00001",
+		ActionID:        "candidate-owner-leave-00001",
 		ExpectedVersion: h.version,
 	}); err != nil {
 		t.Fatal(err)

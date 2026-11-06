@@ -182,8 +182,7 @@ jobs:
       - name: Candidate Go formatting and bounded security tests
         working-directory: production/server
         run: |
-          gofmt -w internal/service/candidate_match.go internal/api/candidate_match.go internal/api/candidate_match_test.go
-          git diff --binary -- internal/service/candidate_match.go internal/api/candidate_match.go internal/api/candidate_match_test.go > "$RUNNER_TEMP/candidate-gofmt.patch"
+          test -z "$(gofmt -l internal/service/candidate_match.go internal/api/candidate_match.go internal/api/candidate_match_test.go)"
           go test -tags rex_candidate -race -count=1 -timeout 5m ./internal/games/trixcomplex ./internal/service
           go test -tags rex_candidate -race -count=1 -timeout 5m ./internal/api -run 'TestCandidateRoutesAbsentFromPublicAPI|TestCandidateStrictBodyRejectsForgedIdentityAndUnknownFields|TestCandidateRosterChangeAndOutsiderFailClosed'
       - name: Preserve gofmt patch for source review
