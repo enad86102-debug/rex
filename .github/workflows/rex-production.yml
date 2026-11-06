@@ -182,9 +182,18 @@ jobs:
       - name: Candidate Go formatting and bounded security tests
         working-directory: production/server
         run: |
-          test -z "$(gofmt -l internal/service/candidate_match.go internal/api/candidate_match.go internal/api/candidate_match_test.go)"
+          gofmt -w internal/service/candidate_match.go internal/api/candidate_match.go internal/api/candidate_match_test.go
+          git diff --binary -- internal/service/candidate_match.go internal/api/candidate_match.go internal/api/candidate_match_test.go > "$RUNNER_TEMP/candidate-gofmt.patch"
           go test -tags rex_candidate -race -count=1 -timeout 5m ./internal/games/trixcomplex ./internal/service
           go test -tags rex_candidate -race -count=1 -timeout 5m ./internal/api -run 'TestCandidateRoutesAbsentFromPublicAPI|TestCandidateStrictBodyRejectsForgedIdentityAndUnknownFields|TestCandidateRosterChangeAndOutsiderFailClosed'
+      - name: Preserve gofmt patch for source review
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: rex-candidate-gofmt-patch
+          path: ${{ runner.temp }}/candidate-gofmt.patch
+          if-no-files-found: ignore
+          retention-days: 3
       - name: Full server-authoritative eight-deal candidate test
         working-directory: production/server
         run: go test -tags rex_candidate -count=1 -timeout 10m ./internal/api -run '^TestCandidateFourAuthenticatedClientsFullEightDeals$' -v
