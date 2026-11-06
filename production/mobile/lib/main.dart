@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'api.dart';
+import 'candidate_game.dart';
 import 'controller.dart';
 import 'strings.dart';
 import 'vault.dart';
@@ -377,6 +378,25 @@ class _RexHomeState extends State<RexHome> {
         ),
       ),
       const SizedBox(height: 12),
+      if (RexController.candidateEnabled &&
+          table['game'] == 'trix_complex') ...[
+        const SizedBox(height: 12),
+        FilledButton.tonalIcon(
+          onPressed: c.busy || c.hasPendingAction
+              ? null
+              : () => Navigator.of(context).push<void>(
+                    MaterialPageRoute(
+                      builder: (_) => CandidateGameScreen(
+                        controller: c,
+                        roomId: table['id'] as String,
+                        owner: table['owner_id'] == playerId,
+                      ),
+                    ),
+                  ),
+          icon: const Icon(Icons.style_outlined),
+          label: const Text('مباراة تريكس داخلية غير معتمدة'),
+        ),
+      ],
       TextButton(
         onPressed: c.busy || c.hasPendingAction ? null : c.leave,
         child: const Text(RexStrings.leave),

@@ -46,6 +46,10 @@ type Options struct {
 }
 
 func New(s *service.Service, options ...Options) http.Handler {
+	return newRouter(s, nil, options...)
+}
+
+func newRouter(s *service.Service, register func(*http.ServeMux, *handler), options ...Options) http.Handler {
 	h := &handler{s: s, buckets: make(map[string]bucket), startedAt: time.Now()}
 	capacity := 64
 	if len(options) > 0 && options[0].MaxInFlight > 0 {
@@ -71,6 +75,9 @@ func New(s *service.Service, options ...Options) http.Handler {
 	if h.adminEnabled {
 		mux.HandleFunc("GET /v1/admin/overview", h.overview)
 		mux.HandleFunc("GET /v1/admin/runtime", h.runtime)
+	}
+	if register != nil {
+		register(mux, h)
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "no-store")
