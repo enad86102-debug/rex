@@ -43,7 +43,12 @@ jobs:
       - name: Go verification
         working-directory: production/server
         run: |
-          test -z "$(gofmt -l .)"
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            printf "Unformatted Go files:\n%s\n" "$unformatted"
+            gofmt -d $(printf "%s\n" "$unformatted")
+            exit 1
+          fi
           go test -race -cover ./...
           go vet ./...
           go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
@@ -182,7 +187,11 @@ jobs:
       - name: Candidate Go formatting and bounded security tests
         working-directory: production/server
         run: |
-          test -z "$(gofmt -l internal/service/candidate_match.go internal/api/candidate_match.go internal/api/candidate_match_test.go)"
+          gofmt -d internal/service/candidate_match.go internal/api/candidate_match.go internal/api/candidate_match_test.go > "$RUNNER_TEMP/candidate-gofmt.patch"
+          if [ -s "$RUNNER_TEMP/candidate-gofmt.patch" ]; then
+            cat "$RUNNER_TEMP/candidate-gofmt.patch"
+            exit 1
+          fi
           go test -tags rex_candidate -race -count=1 -timeout 5m ./internal/games/trixcomplex ./internal/service
           go test -tags rex_candidate -race -count=1 -timeout 5m ./internal/api -run 'TestCandidateRoutesAbsentFromPublicAPI|TestCandidateStrictBodyRejectsForgedIdentityAndUnknownFields|TestCandidateRosterChangeAndOutsiderFailClosed'
       - name: Preserve gofmt patch for source review
