@@ -24,7 +24,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
-          go-version: '1.27.3'
+          go-version: '1.27.4'
           cache: false
       # Pin JDK 21: ubuntu-latest may expose JDK 25, which this AGP/Kotlin stack cannot parse.
       - uses: actions/setup-java@v4
@@ -95,7 +95,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
-          go-version: '1.27.3'
+          go-version: '1.27.4'
           cache: false
       # Pin JDK 21: ubuntu-latest may expose JDK 25, which this AGP/Kotlin stack cannot parse.
       - uses: actions/setup-java@v4
@@ -182,7 +182,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
-          go-version: '1.27.3'
+          go-version: '1.27.4'
           cache: false
       - name: Candidate Go formatting and bounded security tests
         working-directory: production/server
