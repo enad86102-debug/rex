@@ -43,7 +43,7 @@ func candidateHarness(t *testing.T) *candidateTestHarness {
 		h.tokens[i] = guest.Token
 		if i == 0 {
 			table, err = s.Act(h.tokens[0], "create", "", service.Command{
-				ActionID:        fmt.Sprintf("candidate-create-%016d", i), Game: "trix_complex",
+				ActionID: fmt.Sprintf("candidate-create-%016d", i), Game: "trix_complex",
 			})
 		} else {
 			table, err = s.Act(h.tokens[i], "join", "", service.Command{
@@ -57,7 +57,7 @@ func candidateHarness(t *testing.T) *candidateTestHarness {
 	for i := range h.tokens {
 		var err error
 		table, err = s.Act(h.tokens[i], "ready", table.ID, service.Command{
-			ActionID: fmt.Sprintf("candidate-ready-%016d", i),
+			ActionID:        fmt.Sprintf("candidate-ready-%016d", i),
 			ExpectedVersion: table.Version, Ready: true,
 		})
 		if err != nil {
