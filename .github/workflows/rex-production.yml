@@ -88,16 +88,17 @@ jobs:
         run: |
           dart format lib test
           echo 'BEGIN_REX_FLUTTER_FORMAT_PATCH'
-          git diff -- lib test
+          git diff -- lib test > "$RUNNER_TEMP/rex-sprint0-dart-format.patch"
+          cat "$RUNNER_TEMP/rex-sprint0-dart-format.patch"
           echo 'END_REX_FLUTTER_FORMAT_PATCH'
       - name: Upload Flutter formatter patch
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: rex-sprint0-dart-format
-          path: production/mobile/lib/
+          path: ${{ runner.temp }}/rex-sprint0-dart-format.patch
           if-no-files-found: ignore
-          retention-days: 1
+          retention-days: 3
       - name: Real Flutter to Go room integration
         run: bash production/tools/check_live.sh
       - name: Internal Android compilation only
