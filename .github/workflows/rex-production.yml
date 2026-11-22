@@ -80,6 +80,25 @@ jobs:
           dart format --output=none --set-exit-if-changed lib test
           flutter analyze
           flutter test --reporter expanded
+      # Sprint 0: preserve the exact formatter diff for a focused source fix.
+      # This does NOT relax the earlier mandatory formatting gate.
+      - name: Capture Flutter formatter patch on failed checks
+        if: failure()
+        working-directory: production/mobile
+        run: |
+          dart format lib test
+          echo 'BEGIN_REX_FLUTTER_FORMAT_PATCH'
+          git diff -- lib test > "$RUNNER_TEMP/rex-sprint0-dart-format.patch"
+          cat "$RUNNER_TEMP/rex-sprint0-dart-format.patch"
+          echo 'END_REX_FLUTTER_FORMAT_PATCH'
+      - name: Upload Flutter formatter patch
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: rex-sprint0-dart-format
+          path: ${{ runner.temp }}/rex-sprint0-dart-format.patch
+          if-no-files-found: ignore
+          retention-days: 3
       - name: Real Flutter to Go room integration
         run: bash production/tools/check_live.sh
       - name: Internal Android compilation only
