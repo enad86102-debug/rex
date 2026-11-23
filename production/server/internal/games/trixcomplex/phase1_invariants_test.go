@@ -89,7 +89,7 @@ func TestPhase1CompleteEightDealMatrix(t *testing.T) {
 					}
 					assertCandidateDeckConservation(t, m, eventStart)
 						if steps%13 == 0 {
-							assertPhase1PrivateViews(t, m)
+						assertPhase1PrivateViews(t, m)
 						}
 					// A retried command must be no-op even after the turn changes.
 					if steps%19 == 0 {
