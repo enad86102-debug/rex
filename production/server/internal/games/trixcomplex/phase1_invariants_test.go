@@ -215,3 +215,42 @@ func TestPhase1GoldenUndoubledComplexTricks(t *testing.T) {
 		})
 	}
 }
+
+func TestPhase1SeatRotationUsesExplicitProfileNotScreenPosition(t *testing.T) {
+	profile := testProfile()
+	// This reverse-order profile is a QA permutation, not a rules decision.
+	profile.SeatOrder = [4]SeatID{0, 3, 2, 1}
+	m, err := NewCandidateMatch("draft-reverse-seat-order", profile, testMembers, cards.Deck())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if m.owner != 3 {
+		t.Fatal("the initial 7-hearts holder was not used")
+	}
+	next, err := m.nextSeat(m.owner, false)
+	if err != nil || next != 2 {
+		t.Fatalf("hard-coded visual order bypassed profile: seat=%d err=%v", next, err)
+	}
+	sequence := 1
+	chooseTest(t, m, Complex, sequence)
+	sequence++
+	playCompleteComplex(t, m, &sequence)
+	if err := m.AdvanceDeal(cards.Deck()); err != nil {
+		t.Fatal(err)
+	}
+	chooseTest(t, m, Trix, sequence)
+	sequence++
+	playCompleteTrix(t, m, &sequence)
+	if err := m.AdvanceDeal(cards.Deck()); err != nil {
+		t.Fatal(err)
+	}
+	if m.owner != 2 || m.kingdom != 1 || m.phase != ContractSelection {
+		t.Fatalf("kingdom owner ignored reverse seat profile: owner=%d kingdom=%d phase=%s", m.owner, m.kingdom, m.phase)
+	}
+	if err := m.VerifyReplay(); err != nil {
+		t.Fatal("reverse order replay is not deterministic", err)
+	}
+	if !errors.Is(profile.PublicActivation(), ErrUnapproved) {
+		t.Fatal("test reverse seat order was treated as founder-approved")
+	}
+}
