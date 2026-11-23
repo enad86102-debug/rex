@@ -19,7 +19,7 @@ void main() {
       endpoint.isEmpty && kDebugMode ? 'http://10.0.2.2:8080' : endpoint,
       allowLoopbackHttp: kDebugMode,
     );
-    runApp(RexApp(controller: RexController(api, AndroidVault())));
+    runApp(RexApp(controller: RexController(api, PlatformSessionVault())));
   } catch (_) {
     runApp(
       const MaterialApp(
