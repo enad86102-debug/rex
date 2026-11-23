@@ -88,9 +88,9 @@ func TestPhase1CompleteEightDealMatrix(t *testing.T) {
 						t.Fatal("authoritative version did not advance exactly once")
 					}
 					assertCandidateDeckConservation(t, m, eventStart)
-						if steps%13 == 0 {
+					if steps%13 == 0 {
 						assertPhase1PrivateViews(t, m)
-						}
+					}
 					// A retried command must be no-op even after the turn changes.
 					if steps%19 == 0 {
 						before, err := m.Clone()
