@@ -14,9 +14,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ios-template-scaffold:
+  ios-simulator:
     runs-on: macos-15
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -26,36 +26,22 @@ jobs:
           channel: stable
           flutter-version: '3.35.7'
           cache: true
-      - name: Generate auditable iOS template (temporary bootstrap)
+      - name: Verify committed iOS project and Flutter simulator build
         working-directory: production/mobile
         run: |
-          flutter create --platforms=ios --org dev.rex.internal --project-name rex_production --no-pub .
-          python3 - <<'PY'
-          import base64
-          import hashlib
-          from pathlib import Path
-          roots = Path('ios')
-          files = sorted(p for p in roots.rglob('*') if p.is_file() and not p.is_symlink())
-          count = 0
-          for file in files:
-              rel = file.as_posix()
-              if any(part in {'.symlinks', 'Pods', 'ephemeral', 'xcuserdata'} for part in file.parts):
-                  continue
-              if rel.endswith(('.xcuserstate', '.DS_Store', '.last_build_id')):
-                  continue
-              raw = file.read_bytes()
-              if len(raw) > 1_000_000:
-                  raise ValueError(f'iOS template file too large: {rel}')
-              encoded = base64.b64encode(raw).decode('ascii')
-              print(f'REX_IOS_START|{rel}|{hashlib.sha256(raw).hexdigest()}|{len(raw)}')
-              for pos in range(0, len(encoded), 4000):
-                  print('REX_IOS_DATA|' + encoded[pos:pos+4000])
-              print('REX_IOS_END')
-              count += 1
-          print(f'REX_IOS_TOTAL|{count}')
-          PY
+          test -f ios/Runner.xcodeproj/project.pbxproj
+          test -f ios/Runner/AppDelegate.swift
           flutter pub get --enforce-lockfile
           flutter build ios --simulator --no-codesign --no-pub
+      - name: Native Keychain tests on iPhone Simulator
+        working-directory: production/mobile
+        run: |
+          SIM_ID="$(xcrun simctl list devices available -j | python3 -c 'import json,sys;d=json.load(sys.stdin)["devices"];print(next((x["udid"] for group in d.values() for x in group if "iPhone" in x["name"]),""))')"
+          if [ -z "$SIM_ID" ]; then
+            echo "No available iPhone simulator device: native Keychain tests cannot be marked PASS"
+            exit 1
+          fi
+          xcodebuild test -workspace ios/Runner.xcworkspace -scheme Runner -destination "platform=iOS Simulator,id=$SIM_ID" -only-testing:RunnerTests/RunnerTests CODE_SIGNING_ALLOWED=NO -quiet
 
   sprint0-format:
     runs-on: ubuntu-latest
