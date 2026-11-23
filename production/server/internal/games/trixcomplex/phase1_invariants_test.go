@@ -124,6 +124,15 @@ func TestPhase1CompleteEightDealMatrix(t *testing.T) {
 			if sum != 0 {
 				t.Fatalf("4 Complex and 4 Trix candidate deals must net zero, got %d", sum)
 			}
+			var eventScores [4]int
+			for _, event := range m.PublicEvents() {
+				for seat, delta := range event.ScoreDelta {
+					eventScores[seat] += delta
+				}
+			}
+			if eventScores != result.Scores {
+				t.Fatalf("draft event ledger %v differs from final result %v", eventScores, result.Scores)
+			}
 			trickWins, placements, dealt, kingdoms, completed := 0, 0, 0, 0, 0
 			for _, event := range m.PublicEvents() {
 				switch event.Type {
