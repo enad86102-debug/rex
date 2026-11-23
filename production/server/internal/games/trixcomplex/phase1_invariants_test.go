@@ -44,6 +44,8 @@ func TestPhase1CompleteEightDealMatrix(t *testing.T) {
 					t.Fatalf("incorrect kingdom/phase at deal %d: kingdom=%d phase=%s", dealNumber, m.kingdom, m.phase)
 				}
 
+				eventStart := len(m.events)
+				assertCandidateDeckConservation(t, m, eventStart)
 				// Exercise both possible orders of Complex and Trix contracts.
 				contract := Complex
 				if (dealNumber+int(seed))%2 == 1 {
@@ -83,6 +85,7 @@ func TestPhase1CompleteEightDealMatrix(t *testing.T) {
 					if m.version != beforeVersion+1 || result.Version != m.version {
 						t.Fatal("authoritative version did not advance exactly once")
 					}
+					assertCandidateDeckConservation(t, m, eventStart)
 					// A retried command must be no-op even after the turn changes.
 					if steps%19 == 0 {
 						before, err := m.Clone()
@@ -252,5 +255,34 @@ func TestPhase1SeatRotationUsesExplicitProfileNotScreenPosition(t *testing.T) {
 	}
 	if !errors.Is(profile.PublicActivation(), ErrUnapproved) {
 		t.Fatal("test reverse seat order was treated as founder-approved")
+	}
+}
+
+// assertCandidateDeckConservation proves that all 52 cards are either still
+// privately held or already publicly played in this one proposed deal.
+func assertCandidateDeckConservation(t *testing.T, m *Match, eventStart int) {
+	t.Helper()
+	seen := make(map[cards.Card]bool, 52)
+	for _, hand := range m.hands {
+		for _, card := range hand {
+			if !validCard(card) || seen[card] {
+				t.Fatalf("draft card is invalid or duplicated in a hand: %+v", card)
+			}
+			seen[card] = true
+		}
+	}
+	played := 0
+	for _, event := range m.events[eventStart:] {
+		if event.Type != "card_played" && event.Type != "card_placed" {
+			continue
+		}
+		if event.Card == nil || !validCard(*event.Card) || seen[*event.Card] {
+			t.Fatalf("draft card is duplicated or invalid in event: %+v", event)
+		}
+		seen[*event.Card] = true
+		played++
+	}
+	if len(seen) != 52 || played != int(m.playedCount) {
+		t.Fatalf("draft deck conservation failed: unique=%d played=%d count=%d", len(seen), played, m.playedCount)
 	}
 }
