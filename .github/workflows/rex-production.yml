@@ -77,7 +77,10 @@ jobs:
         working-directory: production/mobile
         run: |
           flutter pub get --enforce-lockfile
-          dart format --output=none --set-exit-if-changed lib test
+          dart format --output=write lib test
+          echo '===== SPRINT0 BEGIN FORMAT PATCH ====='
+          git diff --no-ext-diff -- lib test
+          echo '===== SPRINT0 END FORMAT PATCH ====='
           flutter analyze
           flutter test --reporter expanded
       - name: Real Flutter to Go room integration
