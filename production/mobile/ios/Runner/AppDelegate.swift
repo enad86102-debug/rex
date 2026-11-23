@@ -3,9 +3,13 @@ import Security
 import UIKit
 
 /// Native secure-session channel. No plaintext or iCloud-synchronized fallback.
-private final class RexSessionKeychain {
-  private let service = "dev.rex.internal.session.v1"
+final class RexSessionKeychain {
+  private let service: String
   private let account = "active_session"
+
+  init(service: String = "dev.rex.internal.session.v1") {
+    self.service = service
+  }
 
   private var query: [String: Any] {
     [
@@ -79,10 +83,13 @@ private final class RexSessionKeychain {
           case "read":
             result(try sessionKeychain.read())
           case "write":
-            guard call.arguments == nil || call.arguments is String else {
+            if call.arguments == nil || call.arguments is NSNull {
+              try sessionKeychain.write(nil)
+            } else if let value = call.arguments as? String {
+              try sessionKeychain.write(value)
+            } else {
               throw NSError(domain: "REXSessionVault", code: 1)
             }
-            try sessionKeychain.write(call.arguments as? String)
             result(nil)
           default:
             result(FlutterMethodNotImplemented)
