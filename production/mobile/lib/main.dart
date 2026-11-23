@@ -19,7 +19,7 @@ void main() {
       endpoint.isEmpty && kDebugMode ? 'http://10.0.2.2:8080' : endpoint,
       allowLoopbackHttp: kDebugMode,
     );
-    runApp(RexApp(controller: RexController(api, AndroidVault())));
+    runApp(RexApp(controller: RexController(api, PlatformSessionVault())));
   } catch (_) {
     runApp(
       const MaterialApp(
@@ -385,14 +385,14 @@ class _RexHomeState extends State<RexHome> {
           onPressed: c.busy || c.hasPendingAction
               ? null
               : () => Navigator.of(context).push<void>(
-                    MaterialPageRoute(
-                      builder: (_) => CandidateGameScreen(
-                        controller: c,
-                        roomId: table['id'] as String,
-                        owner: table['owner_id'] == playerId,
-                      ),
+                  MaterialPageRoute(
+                    builder: (_) => CandidateGameScreen(
+                      controller: c,
+                      roomId: table['id'] as String,
+                      owner: table['owner_id'] == playerId,
                     ),
                   ),
+                ),
           icon: const Icon(Icons.style_outlined),
           label: const Text('مباراة تريكس داخلية غير معتمدة'),
         ),

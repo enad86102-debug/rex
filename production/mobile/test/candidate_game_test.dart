@@ -17,7 +17,8 @@ Map<String, dynamic> matchState({
       'seat': 2,
       'turn': 2,
       'scores': [0, -25, 50, -25],
-      'hand': cards ??
+      'hand':
+          cards ??
           [
             {'suit': 2, 'rank': 11},
             {'suit': 3, 'rank': 12},
@@ -65,10 +66,7 @@ void main() {
     expect(find.text('J♥'), findsOneWidget);
     expect(find.text('Q♠'), findsOneWidget);
     final blocked = tester.widget<OutlinedButton>(
-      find.ancestor(
-        of: find.text('Q♠'),
-        matching: find.byType(OutlinedButton),
-      ),
+      find.ancestor(of: find.text('Q♠'), matching: find.byType(OutlinedButton)),
     );
     expect(blocked.onPressed, isNull);
     await tester.ensureVisible(find.text('J♥'));
@@ -80,9 +78,7 @@ void main() {
     });
   });
 
-  testWidgets('candidate pass button requires server can_pass', (
-    tester,
-  ) async {
+  testWidgets('candidate pass button requires server can_pass', (tester) async {
     String? issued;
     await tester.pumpWidget(
       MaterialApp(
@@ -121,10 +117,7 @@ void main() {
       ),
     );
     final blocked = tester.widget<OutlinedButton>(
-      find.ancestor(
-        of: find.text('J♥'),
-        matching: find.byType(OutlinedButton),
-      ),
+      find.ancestor(of: find.text('J♥'), matching: find.byType(OutlinedButton)),
     );
     expect(blocked.onPressed, isNull);
   });

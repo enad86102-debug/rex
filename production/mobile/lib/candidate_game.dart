@@ -123,7 +123,8 @@ class _CandidateGameScreenState extends State<CandidateGameScreen> {
               if (_state != null)
                 CandidateGamePanel(
                   response: _state!,
-                  busy: widget.controller.busy ||
+                  busy:
+                      widget.controller.busy ||
                       widget.controller.hasPendingAction,
                   onAction: _play,
                 )
@@ -166,12 +167,7 @@ class CandidateGamePanel extends StatelessWidget {
   final Future<void> Function(String, Map<String, dynamic>?) onAction;
 
   static const suits = ['♣', '♦', '♥', '♠'];
-  static const ranks = {
-    11: 'J',
-    12: 'Q',
-    13: 'K',
-    14: 'A',
-  };
+  static const ranks = {11: 'J', 12: 'Q', 13: 'K', 14: 'A'};
 
   String cardName(Map<dynamic, dynamic> card) {
     final suit = card['suit'];
@@ -186,8 +182,7 @@ class CandidateGamePanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final view = response['view'];
     final legal = response['legal_moves'];
-    if (view is! Map<String, dynamic> ||
-        legal is! Map<String, dynamic>) {
+    if (view is! Map<String, dynamic> || legal is! Map<String, dynamic>) {
       return const Text('بيانات المباراة غير مكتملة.');
     }
     final seat = view['seat'];
@@ -222,7 +217,9 @@ class CandidateGamePanel extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
-        Text('العقد: ${phase == 'contract_selection' ? 'اختيار العقد' : (view['contract'] ?? phase)}'),
+        Text(
+          'العقد: ${phase == 'contract_selection' ? 'اختيار العقد' : (view['contract'] ?? phase)}',
+        ),
         Text('دور المقعد: ${turn is int ? turn + 1 : '?'}'),
         const SizedBox(height: 12),
         Text(
@@ -267,9 +264,11 @@ class CandidateGamePanel extends StatelessWidget {
                 onPressed: !active
                     ? null
                     : () => onAction('choose_contract', {
-                          'contract': choice as String,
-                        }),
-                child: Text('اختيار عقد ${choice == 'complex' ? 'كومبلكس' : 'تركس'}'),
+                        'contract': choice as String,
+                      }),
+                child: Text(
+                  'اختيار عقد ${choice == 'complex' ? 'كومبلكس' : 'تركس'}',
+                ),
               ),
             ),
         ],
@@ -284,14 +283,12 @@ class CandidateGamePanel extends StatelessWidget {
           children: [
             for (final card in hand)
               OutlinedButton(
-                onPressed: active &&
+                onPressed:
+                    active &&
                         legalSet.contains('${card['suit']}:${card['rank']}')
                     ? () => onAction('play_card', {
-                          'card': {
-                            'suit': card['suit'],
-                            'rank': card['rank'],
-                          },
-                        })
+                        'card': {'suit': card['suit'], 'rank': card['rank']},
+                      })
                     : null,
                 child: Text(cardName(card)),
               ),
