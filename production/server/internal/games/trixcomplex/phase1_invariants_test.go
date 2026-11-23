@@ -1,6 +1,8 @@
 package trixcomplex
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -86,6 +88,9 @@ func TestPhase1CompleteEightDealMatrix(t *testing.T) {
 						t.Fatal("authoritative version did not advance exactly once")
 					}
 					assertCandidateDeckConservation(t, m, eventStart)
+						if steps%13 == 0 {
+							assertPhase1PrivateViews(t, m)
+						}
 					// A retried command must be no-op even after the turn changes.
 					if steps%19 == 0 {
 						before, err := m.Clone()
@@ -284,5 +289,64 @@ func assertCandidateDeckConservation(t *testing.T, m *Match, eventStart int) {
 	}
 	if len(seen) != 52 || played != int(m.playedCount) {
 		t.Fatalf("draft deck conservation failed: unique=%d played=%d count=%d", len(seen), played, m.playedCount)
+	}
+}
+
+func assertPhase1PrivateViews(t *testing.T, m *Match) {
+	t.Helper()
+	for seat, actor := range m.members {
+		view, err := m.View(actor)
+		if err != nil {
+			t.Fatal("authenticated seat denied its own draft view", err)
+		}
+		if view.Seat != SeatID(seat) || view.Version != m.version ||
+			!reflect.DeepEqual(view.Hand, m.hands[seat]) {
+			t.Fatalf("seat %d received inconsistent private view", seat)
+		}
+		wire, err := json.Marshal(view)
+		if err != nil {
+			t.Fatal("draft view could not be encoded", err)
+		}
+		for opponent := range m.hands {
+			if opponent == seat {
+				continue
+			}
+			if view.OpponentCounts[opponent] != len(m.hands[opponent]) {
+				t.Fatalf("seat %d saw incorrect opponent %d card count", seat, opponent)
+			}
+			for _, hidden := range m.hands[opponent] {
+				cardWire, err := json.Marshal(hidden)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if bytes.Contains(wire, cardWire) {
+					t.Fatalf("seat %d draft view leaked unplayed opponent card from seat %d", seat, opponent)
+				}
+			}
+		}
+		moves, err := m.LegalMoves(actor)
+		if err != nil || moves.Version != m.version {
+			t.Fatalf("seat %d received invalid legal projection: %v", seat, err)
+		}
+		if SeatID(seat) != m.turn {
+			if len(moves.Cards) != 0 || len(moves.Contracts) != 0 || moves.CanPass {
+				t.Fatalf("off-turn seat %d was offered an action", seat)
+			}
+			continue
+		}
+		for _, card := range moves.Cards {
+			if !hasCard(m.hands[seat], card) {
+				t.Fatalf("seat %d offered a card it does not hold", seat)
+			}
+		}
+		if moves.CanPass && (m.phase != TrixActive || len(moves.Cards) != 0) {
+			t.Fatalf("seat %d offered illegal pass", seat)
+		}
+	}
+	if _, err := m.View("unauthorized-player"); !errors.Is(err, ErrUnauthorized) {
+		t.Fatal("nonmember was offered draft match view")
+	}
+	if _, err := m.LegalMoves("unauthorized-player"); !errors.Is(err, ErrUnauthorized) {
+		t.Fatal("nonmember was offered private legal move projection")
 	}
 }
