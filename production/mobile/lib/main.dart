@@ -385,14 +385,14 @@ class _RexHomeState extends State<RexHome> {
           onPressed: c.busy || c.hasPendingAction
               ? null
               : () => Navigator.of(context).push<void>(
-                    MaterialPageRoute(
-                      builder: (_) => CandidateGameScreen(
-                        controller: c,
-                        roomId: table['id'] as String,
-                        owner: table['owner_id'] == playerId,
-                      ),
+                  MaterialPageRoute(
+                    builder: (_) => CandidateGameScreen(
+                      controller: c,
+                      roomId: table['id'] as String,
+                      owner: table['owner_id'] == playerId,
                     ),
                   ),
+                ),
           icon: const Icon(Icons.style_outlined),
           label: const Text('مباراة تريكس داخلية غير معتمدة'),
         ),
