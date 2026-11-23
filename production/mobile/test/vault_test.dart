@@ -11,8 +11,7 @@ void main() {
 
   tearDown(() => messenger.setMockMethodCallHandler(channel, null));
 
-  test('native secure vault round trips UTF-8 data and clears the record',
-      () async {
+  test('secure vault round trip and deletion', () async {
     String? stored;
     messenger.setMockMethodCallHandler(channel, (call) async {
       switch (call.method) {
@@ -44,8 +43,7 @@ void main() {
     );
   });
 
-  test('native storage failures propagate instead of creating a session',
-      () async {
+  test('native storage failures propagate', () async {
     messenger.setMockMethodCallHandler(channel, (call) async {
       throw PlatformException(code: 'vault_unavailable');
     });
