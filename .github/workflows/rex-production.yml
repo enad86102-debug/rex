@@ -331,4 +331,8 @@ jobs:
             echo 'Unexpected legacy release success'
             exit 1
           fi
-          grep -F 'Legacy REX release builds are disabled' "$RUNNER_TEMP/rex-legacy-release.log"
+          if ! grep -F 'Legacy REX release builds are disabled' "$RUNNER_TEMP/rex-legacy-release.log"; then
+            echo 'Legacy release failed for an unexpected reason; preserving the release safety gate.'
+            tail -n 100 "$RUNNER_TEMP/rex-legacy-release.log"
+            exit 1
+          fi
