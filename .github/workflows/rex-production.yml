@@ -14,6 +14,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  sprint0-format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: stable
+          flutter-version: '3.35.7'
+          cache: true
+      - name: Sprint 0 format patch and Flutter tests
+        working-directory: production/mobile
+        run: |
+          flutter pub get --enforce-lockfile
+          dart format --output=write lib test
+          echo '===== SPRINT0 BEGIN FORMAT PATCH ====='
+          git diff --no-ext-diff -- lib test
+          echo '===== SPRINT0 END FORMAT PATCH ====='
+          flutter analyze
+          flutter test --reporter expanded
+
   foundation:
     runs-on: ubuntu-latest
     timeout-minutes: 25
