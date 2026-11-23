@@ -2,15 +2,27 @@ import Flutter
 import UIKit
 import XCTest
 
+@testable import Runner
 
-class RunnerTests: XCTestCase {
+final class RunnerTests: XCTestCase {
+  func testKeychainRoundTripAndRemoval() throws {
+    let service = "dev.rex.internal.test." + UUID().uuidString
+    let vault = RexSessionKeychain(service: service)
+    defer { try? vault.write(nil) }
 
-
-
-  func testExample() {
-    // If you add code to the Runner application, consider adding tests here.
-    // See https://developer.apple.com/documentation/xctest for more information about using XCTest.
+    XCTAssertNil(try vault.read())
+    try vault.write("جلسة REX — 🔐")
+    XCTAssertEqual(try vault.read(), "جلسة REX — 🔐")
+    try vault.write(nil)
+    XCTAssertNil(try vault.read())
   }
 
+  func testOversizedRecordRejectedWithoutWriting() throws {
+    let service = "dev.rex.internal.test." + UUID().uuidString
+    let vault = RexSessionKeychain(service: service)
+    defer { try? vault.write(nil) }
 
+    XCTAssertThrowsError(try vault.write(String(repeating: "A", count: 16_385)))
+    XCTAssertNil(try vault.read())
+  }
 }
