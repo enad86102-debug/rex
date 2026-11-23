@@ -48,10 +48,7 @@ void main() {
       throw PlatformException(code: 'vault_unavailable');
     });
     final vault = PlatformSessionVault();
-    await expectLater(
-      vault.write('secret'),
-      throwsA(isA<PlatformException>()),
-    );
+    await expectLater(vault.write('secret'), throwsA(isA<PlatformException>()));
     await expectLater(vault.read(), throwsA(isA<PlatformException>()));
   });
 }
