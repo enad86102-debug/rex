@@ -1,13 +1,13 @@
 import 'package:flutter/services.dart';
 
+/// Shared contract: Android Keystore and iOS Keychain are required native
+/// implementations. Missing native handlers are errors, never plaintext storage.
 abstract interface class SessionVault {
   Future<String?> read();
   Future<void> write(String? value);
 }
 
-// Android implements this channel with AES-GCM and a non-exportable Keystore
-// key. No fallback to plaintext preferences or in-memory pretend persistence.
-class AndroidVault implements SessionVault {
+class PlatformSessionVault implements SessionVault {
   static const _channel = MethodChannel('rex/session_vault');
 
   @override
@@ -17,3 +17,7 @@ class AndroidVault implements SessionVault {
   Future<void> write(String? value) =>
       _channel.invokeMethod<void>('write', value);
 }
+
+/// Temporary compatibility alias for existing Android-only integrations.
+@Deprecated('Use PlatformSessionVault for Android and iOS')
+class AndroidVault extends PlatformSessionVault {}
