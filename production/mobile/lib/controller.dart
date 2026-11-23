@@ -41,11 +41,19 @@ class RexController extends ChangeNotifier {
     }
     if (candidateEnabled &&
         RegExp(r'^/v1/tables/[0-9a-f]{32}/match/actions$').hasMatch(path)) {
-      const keys = {'action_id', 'expected_version', 'type', 'contract', 'card'};
+      const keys = {
+        'action_id',
+        'expected_version',
+        'type',
+        'contract',
+        'card',
+      };
       if (!body.keys.every(keys.contains) ||
           body['expected_version'] is! int ||
           (body['expected_version'] as int) < 1 ||
-          body['type'] is! String) return false;
+          body['type'] is! String) {
+        return false;
+      }
       if (body['type'] == 'choose_contract') {
         return {'complex', 'trix'}.contains(body['contract']) &&
             !body.containsKey('card');
@@ -59,9 +67,11 @@ class RexController extends ChangeNotifier {
         final card = body['card'] as Map<String, dynamic>;
         return card.length == 2 &&
             card.keys.every({'suit', 'rank'}.contains) &&
-            card['suit'] is int && (card['suit'] as int) >= 0 &&
+            card['suit'] is int &&
+            (card['suit'] as int) >= 0 &&
             (card['suit'] as int) < 4 &&
-            card['rank'] is int && (card['rank'] as int) >= 2 &&
+            card['rank'] is int &&
+            (card['rank'] as int) >= 2 &&
             (card['rank'] as int) <= 14;
       }
       return false;
@@ -169,7 +179,8 @@ class RexController extends ChangeNotifier {
   });
 
   Future<Map<String, dynamic>> candidateView(String roomId) {
-    if (!candidateEnabled || !signedIn ||
+    if (!candidateEnabled ||
+        !signedIn ||
         !RegExp(r'^[0-9a-f]{32}$').hasMatch(roomId)) {
       throw const ApiFailure('candidate_disabled', status: 403);
     }
@@ -177,24 +188,33 @@ class RexController extends ChangeNotifier {
   }
 
   Future<void> candidateStart(String roomId) {
-    if (!candidateEnabled || !signedIn ||
+    if (!candidateEnabled ||
+        !signedIn ||
         !RegExp(r'^[0-9a-f]{32}$').hasMatch(roomId)) {
       throw const ApiFailure('candidate_disabled', status: 403);
     }
     return _run(() async {
-      await api.request('POST', '/v1/tables/$roomId/match/start',
-          token: _token, body: {});
+      await api.request(
+        'POST',
+        '/v1/tables/$roomId/match/start',
+        token: _token,
+        body: {},
+      );
     });
   }
 
   Future<void> candidateAction(String roomId, Map<String, dynamic> body) {
-    if (!candidateEnabled || !signedIn ||
+    if (!candidateEnabled ||
+        !signedIn ||
         !RegExp(r'^[0-9a-f]{32}$').hasMatch(roomId) ||
         body.containsKey('action_id')) {
       throw const ApiFailure('candidate_disabled', status: 403);
     }
     final path = '/v1/tables/$roomId/match/actions';
-    if (!_validPending({'path': path, 'body': {'action_id': '0' * 32, ...body}})) {
+    if (!_validPending({
+      'path': path,
+      'body': {'action_id': '0' * 32, ...body},
+    })) {
       throw const ApiFailure('invalid_input', status: 400);
     }
     return _act(path, body);
