@@ -75,6 +75,7 @@ type DoubleSelectionWindow struct {
 	owner      map[cards.Card]SeatID
 	choices    [4]map[cards.Card]bool
 	submitted  [4]bool
+	revealed   bool
 }
 
 func isDoublable(card cards.Card) bool {
@@ -110,7 +111,7 @@ func NewDoubleSelectionWindow(hands [4][]cards.Card, start time.Time) (*DoubleSe
 // Submit is private and rejects any card a player does not hold. Submitting
 // zero marks is an explicit pass. No public declaration is emitted here.
 func (w *DoubleSelectionWindow) Submit(seat SeatID, selection []cards.Card, at time.Time) error {
-	if w == nil || seat >= 4 || at.Before(w.start) || !at.Before(w.deadline) {
+	if w == nil || w.revealed || seat >= 4 || at.Before(w.start) || !at.Before(w.deadline) {
 		return ErrInvalidAction
 	}
 	choices := make(map[cards.Card]bool, len(selection))
@@ -140,6 +141,7 @@ func (w *DoubleSelectionWindow) Reveal(at time.Time) ([]DoubleMark, error) {
 	if w == nil || at.Before(w.deadline) {
 		return nil, ErrInvalidState
 	}
+	w.revealed = true
 	out := make([]DoubleMark, 0, 5)
 	for seat, choices := range w.choices {
 		for card := range choices {
