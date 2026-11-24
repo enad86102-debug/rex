@@ -2,6 +2,7 @@ package trixcomplex
 
 import (
 	"slices"
+	"sync"
 	"time"
 
 	"rex/production/server/internal/cards"
@@ -70,6 +71,7 @@ type DoubleMark struct {
 // exposed by the protocol until Reveal. This is rules logic, not a durable
 // transport/session coordinator.
 type DoubleSelectionWindow struct {
+	mu         sync.Mutex
 	start      time.Time
 	deadline   time.Time
 	owner      map[cards.Card]SeatID
@@ -111,7 +113,12 @@ func NewDoubleSelectionWindow(hands [4][]cards.Card, start time.Time) (*DoubleSe
 // Submit is private and rejects any card a player does not hold. Submitting
 // zero marks is an explicit pass. No public declaration is emitted here.
 func (w *DoubleSelectionWindow) Submit(seat SeatID, selection []cards.Card, at time.Time) error {
-	if w == nil || w.revealed || seat >= 4 || at.Before(w.start) || !at.Before(w.deadline) {
+	if w == nil {
+		return ErrInvalidAction
+	}
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	if w.revealed || seat >= 4 || at.Before(w.start) || !at.Before(w.deadline) {
 		return ErrInvalidAction
 	}
 	choices := make(map[cards.Card]bool, len(selection))
@@ -132,13 +139,20 @@ func (w *DoubleSelectionWindow) SubmittedFlags() ([4]bool, error) {
 	if w == nil {
 		return [4]bool{}, ErrInvalidState
 	}
+	w.mu.Lock()
+	defer w.mu.Unlock()
 	return w.submitted, nil
 }
 
 // Reveal is valid at or after the 10 second deadline, never before it.
 // The server returns all declarations together, with deterministic ordering.
 func (w *DoubleSelectionWindow) Reveal(at time.Time) ([]DoubleMark, error) {
-	if w == nil || at.Before(w.deadline) {
+	if w == nil {
+		return nil, ErrInvalidState
+	}
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	if at.Before(w.deadline) {
 		return nil, ErrInvalidState
 	}
 	w.revealed = true
