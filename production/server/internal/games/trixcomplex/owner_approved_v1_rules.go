@@ -71,13 +71,13 @@ type DoubleMark struct {
 // exposed by the protocol until Reveal. This is rules logic, not a durable
 // transport/session coordinator.
 type DoubleSelectionWindow struct {
-	mu         sync.Mutex
-	start      time.Time
-	deadline   time.Time
-	owner      map[cards.Card]SeatID
-	choices    [4]map[cards.Card]bool
-	submitted  [4]bool
-	revealed   bool
+	mu        sync.Mutex
+	start     time.Time
+	deadline  time.Time
+	owner     map[cards.Card]SeatID
+	choices   [4]map[cards.Card]bool
+	submitted [4]bool
+	revealed  bool
 }
 
 func isDoublable(card cards.Card) bool {
@@ -177,11 +177,11 @@ func (w *DoubleSelectionWindow) Reveal(at time.Time) ([]DoubleMark, error) {
 // ComplexTrickAward separates the original trick debit, doubled debit and
 // issuer bonus, so a UI can show every scoring reason without guesswork.
 type ComplexTrickAward struct {
-	Winner       SeatID `json:"winner"`
-	BasePenalty  int    `json:"base_penalty"`
-	DoubleExtra  int    `json:"double_extra"`
-	OwnerBonus   [4]int `json:"owner_bonus"`
-	Delta        [4]int `json:"delta"`
+	Winner      SeatID `json:"winner"`
+	BasePenalty int    `json:"base_penalty"`
+	DoubleExtra int    `json:"double_extra"`
+	OwnerBonus  [4]int `json:"owner_bonus"`
+	Delta       [4]int `json:"delta"`
 }
 
 // ScoreApprovedComplexTrick uses the 2026-11-23 owner-approved scoring policy.
