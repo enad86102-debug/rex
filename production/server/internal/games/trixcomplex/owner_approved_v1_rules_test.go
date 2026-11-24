@@ -3,6 +3,7 @@ package trixcomplex
 import (
 	"errors"
 	"reflect"
+	"sync"
 	"testing"
 	"time"
 
@@ -232,5 +233,47 @@ func TestApprovedWinnerWithTieAndWithdrawal(t *testing.T) {
 	}
 	if !reflect.DeepEqual(rightwardSeatOrder, [4]SeatID{0, 1, 2, 3}) {
 		t.Fatal("approved rightward order was modified")
+	}
+}
+
+func TestApprovedDoubleWindowSimultaneousSubmissionsRaceSafe(t *testing.T) {
+	m := newTestMatch(t)
+	start := time.Unix(999999, 0)
+	window, err := NewDoubleSelectionWindow(m.hands, start)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wg sync.WaitGroup
+	errs := make(chan error, 4)
+	for seat := 0; seat < 4; seat++ {
+		wg.Add(1)
+		go func(seat int) {
+			defer wg.Done()
+			var selected []cards.Card
+			for _, c := range m.hands[seat] {
+				if isDoublable(c) {
+					selected = append(selected, c)
+				}
+			}
+			errs <- window.Submit(SeatID(seat), selected, start.Add(time.Second))
+		}(seat)
+	}
+	wg.Wait()
+	close(errs)
+	for err := range errs {
+		if err != nil {
+			t.Fatal("simultaneous legitimate announcement rejected", err)
+		}
+	}
+	revealed, err := window.Reveal(start.Add(SimultaneousDoubleWindow))
+	if err != nil || len(revealed) != 5 {
+		t.Fatalf("simultaneous announcements lost: %d (%v)", len(revealed), err)
+	}
+	if err := window.Submit(0, nil, start.Add(time.Second)); err == nil {
+		t.Fatal("old-timestamp submission modified already revealed announcements")
+	}
+	again, err := window.Reveal(start.Add(SimultaneousDoubleWindow))
+	if err != nil || !reflect.DeepEqual(revealed, again) {
+		t.Fatal("same reveal not repeatable", err)
 	}
 }
