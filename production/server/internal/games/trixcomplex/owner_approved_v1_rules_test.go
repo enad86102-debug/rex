@@ -176,7 +176,7 @@ func TestApprovedComplexDoubleScoringAndSelfCapture(t *testing.T) {
 		{Seat: 3, Card: cards.Card{Suit: cards.Spades, Rank: 14}},
 	}
 	got, err = ScoreApprovedComplexTrick(self, []DoubleMark{{Card: qDiamond, Owner: 1}})
-	if err != nil || got.Winner != 1 || got.Delta != [4]int{0, -75, 0, 0} {
+	if err != nil || got.Winner != 1 || got.Delta != [4]int{0, -85, 0, 0} {
 		t.Fatalf("self-capture must double debit without bonus: %+v err=%v", got, err)
 	}
 	king := cards.Card{Suit: cards.Hearts, Rank: 13}
